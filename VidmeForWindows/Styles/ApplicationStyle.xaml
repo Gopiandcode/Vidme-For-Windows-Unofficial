@@ -6,13 +6,18 @@
     <SolidColorBrush x:Key="ApplicationTheme_DarkAccent" Color="#121212"/>
     <SolidColorBrush x:Key="ApplicationTheme_DarkMidground" Color="#222222"/>
     <SolidColorBrush x:Key="ApplicationTheme_DarkForeground" Color="#323232"/>
-    <SolidColorBrush x:Key="ApplicationTheme_RedAccent" Color="#622129"/>
-    <SolidColorBrush x:Key="ApplicationTheme_RedMidground" Color="#7a2933"/>
-    <SolidColorBrush x:Key="ApplicationTheme_RedMidgroundLight" Color="#93303c"/>
-    <SolidColorBrush x:Key="ApplicationTheme_RedForeground" Color="#ab3745"/>
-    <SolidColorBrush x:Key="ApplicationTheme_RedHighlights" Color="#c24050"/>
+    <SolidColorBrush x:Key="ApplicationTheme_RedAccent" Color="#c12a48"/>
+    <SolidColorBrush x:Key="ApplicationTheme_RedMidground" Color="#c43e59"/>
+    <SolidColorBrush x:Key="ApplicationTheme_RedMidgroundLight" Color="#f4385e"/>
+    <SolidColorBrush x:Key="ApplicationTheme_RedForeground" Color="#ff496e"/>
+    <SolidColorBrush x:Key="ApplicationTheme_RedHighlights" Color="#f82a53"/>
     <SolidColorBrush x:Key="ApplicationTheme_Highlight" Color="White" />
 
+
+    <SolidColorBrush 
+                        x:Key="SystemControlPageBackgroundMediumAltMediumBrush" 
+                        Color="#F0121212"
+                        />
 
     <Style TargetType="Page">
         <Setter Property="FontFamily" Value="Verdana"/>

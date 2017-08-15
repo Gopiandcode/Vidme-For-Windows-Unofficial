@@ -45,7 +45,6 @@
 
 
         <RelativePanel Grid.Row="0" >
-
             <Button Style="{StaticResource HamburgerButton}" Click="HamburgerButtonClick">
                 &#xE700;
             </Button>
@@ -60,7 +59,7 @@
                         Style="{StaticResource NavigationScrollViewer}"
                         RelativePanel.Above="SettingsSection">
                         <StackPanel Orientation="Vertical">
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="HomeButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="HomeButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE80F;</TextBlock>
@@ -71,7 +70,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="DownloadButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="DownloadButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE896;</TextBlock>
@@ -83,7 +82,7 @@
                                 </RelativePanel> 
                             </Button>
                             <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="FeedButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="FeedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE12A;</TextBlock>
@@ -94,7 +93,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="WatchLaterButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="WatchLaterButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xED5a;</TextBlock>
@@ -105,7 +104,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="TeamPicksButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="TeamPicksButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE840;</TextBlock>
@@ -116,7 +115,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="HotTodayButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="HotTodayButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE82F;</TextBlock>
@@ -127,7 +126,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="FreshUploadsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="FreshUploadsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1ED;</TextBlock>
@@ -138,7 +137,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="CreatorsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="CreatorsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE11D;</TextBlock>
@@ -149,7 +148,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="FollowingButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="FollowingButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE125;</TextBlock>
@@ -160,7 +159,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="FeaturedButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="FeaturedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1CE;</TextBlock>
@@ -178,7 +177,7 @@
                         x:Name="SettingsSection"
                         Style="{StaticResource NavigationSettingsSection}">
                         <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
-                            <Button Style="{StaticResource NavigationButton}">
+                            <Button Style="{StaticResource NavigationButton}" Click="SignInButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="SignInButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1E2;</TextBlock>
@@ -189,7 +188,7 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                         <Button Style="{StaticResource NavigationButton}">
+                         <Button Style="{StaticResource NavigationButton}" Click="SettingsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
                                     <Border x:Name="SettingsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE115;</TextBlock>

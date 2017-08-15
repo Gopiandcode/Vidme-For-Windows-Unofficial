@@ -1,0 +1,92 @@
+﻿<ContentDialog
+    x:Class="VidmeForWindows.Dialogs.LoginDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VidmeForWindows.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="Login_Dialog"
+    Title="Login to Vidme"
+    PrimaryButtonText="Login"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    BorderBrush="{x:Null}"
+    Background="{StaticResource ApplicationTheme_DarkForeground}" RequestedTheme="Dark"
+    >
+
+    <ContentDialog.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ApplicationTheme_RedMidgroundLight}" />
+        </Style>
+    </ContentDialog.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        
+        
+            
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,0,10,10"
+                >Username: </TextBlock>
+            <TextBox
+                Background="{StaticResource ApplicationTheme_DarkMidground}"
+                Foreground="{StaticResource ApplicationTheme_Highlight}"
+                Margin="0,0,0,10"
+                Grid.Column="1"
+                x:Name="Username"></TextBox>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,0,10,0"
+                Grid.Row="1">Password: </TextBlock>
+              
+            <PasswordBox
+                Background="{StaticResource ApplicationTheme_DarkMidground}"
+                Foreground="{StaticResource ApplicationTheme_Highlight}"
+                Margin="0,0,0,0"
+                Grid.Row="1" Grid.Column="1" x:Name="Password" 
+                ></PasswordBox>
+
+        <RelativePanel 
+            Padding="0,10,0,0"
+            Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+                
+                <TextBlock 
+                    Padding="0,0,10,0"
+                    x:Name="SaveCredentialsTextBlock"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                    RelativePanel.AlignVerticalCenterWithPanel="True">
+                    Save Credentials:
+                </TextBlock>
+
+            <CheckBox 
+                      x:Name="SaveCredentialsCheckBox"
+                        RelativePanel.RightOf="SaveCredentialsTextBlock"
+                        RelativePanel.AlignVerticalCenterWith="SaveCredentialsTextBlock" 
+                        HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Center" 
+                        VerticalContentAlignment="Center" RenderTransformOrigin="0,0.5" >
+                <CheckBox.ContentTransitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition/>
+                    </TransitionCollection>
+                </CheckBox.ContentTransitions>
+            </CheckBox>
+
+
+        </RelativePanel>
+        
+    </Grid>
+</ContentDialog>
