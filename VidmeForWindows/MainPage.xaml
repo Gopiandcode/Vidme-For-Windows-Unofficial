@@ -7,7 +7,215 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/MainPageStyle.xaml"/> 
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainSplitView.DisplayMode" Value="Overlay"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainSplitView.DisplayMode" Value="CompactOverlay"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+        <RelativePanel Grid.Row="0" >
+
+            <Button Style="{StaticResource HamburgerButton}" Click="HamburgerButtonClick">
+                &#xE700;
+            </Button>
+        </RelativePanel>
+
+        <SplitView x:Name="MainSplitView"
+                   Style="{StaticResource MainSplitView}">
+            <SplitView.Pane>
+                <RelativePanel Style="{StaticResource NavigationPanel}">
+                    <ScrollViewer
+                        x:Name="ScrollViewer"
+                        Style="{StaticResource NavigationScrollViewer}"
+                        RelativePanel.Above="SettingsSection">
+                        <StackPanel Orientation="Vertical">
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="HomeButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE80F;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="HomeButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                       Home 
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="DownloadButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE896;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="DownloadButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                        Downloads 
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="FeedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE12A;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="FeedButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                        Feed 
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="WatchLaterButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xED5a;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="WatchLaterButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                        Watch Later 
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="TeamPicksButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE840;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="TeamPicksButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                        Team Picks
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="HotTodayButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE82F;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="HotTodayButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Hot Today
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="FreshUploadsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1ED;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="FreshUploadsButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Fresh Uploads
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="CreatorsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE11D;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="CreatorsButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Creators
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="FollowingButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE125;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="FollowingButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Following
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="FeaturedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1CE;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="FeaturedButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Featured
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                            
+                        </StackPanel> 
+                    </ScrollViewer>
+                    <StackPanel 
+                        x:Name="SettingsSection"
+                        Style="{StaticResource NavigationSettingsSection}">
+                        <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
+                            <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="SignInButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1E2;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="SignInButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Sign in
+                                    </TextBlock>
+                                </RelativePanel> 
+                            </Button>
+                         <Button Style="{StaticResource NavigationButton}">
+                                <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
+                                    <Border x:Name="SettingsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE115;</TextBlock>
+                                    </Border>
+                                    <TextBlock RelativePanel.RightOf="SettingsButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                               Settings
+                                    </TextBlock>
+                                </RelativePanel> 
+                          </Button>
+                            
+   
+
+                    </StackPanel>
+                    
+                </RelativePanel>
+            </SplitView.Pane>
+
+            <SplitView.Content>
+                <Frame x:Name="MainFrame"/>
+            </SplitView.Content>
+            
+        </SplitView>
+
+
 
     </Grid>
+
 </Page>

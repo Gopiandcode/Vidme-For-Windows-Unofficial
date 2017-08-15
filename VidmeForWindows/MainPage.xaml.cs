@@ -26,5 +26,10 @@ namespace VidmeForWindows
         {
             this.InitializeComponent();
         }
+
+        private void HamburgerButtonClick(object sender, RoutedEventArgs e)
+        {
+            MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen; 
+        }
     }
 }
