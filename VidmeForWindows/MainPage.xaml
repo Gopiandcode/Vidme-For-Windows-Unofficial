@@ -44,9 +44,34 @@
         </VisualStateManager.VisualStateGroups>
 
 
-        <RelativePanel Grid.Row="0" >
-            <Button Style="{StaticResource HamburgerButton}" Click="HamburgerButtonClick">
+        <RelativePanel Grid.Row="0" Background="{StaticResource ApplicationTheme_DarkMidground}">
+            <Button x:Name="HamburgerButton" Style="{StaticResource HamburgerButton}" Click="HamburgerButtonClick">
                 &#xE700;
+            </Button>
+            <TextBlock 
+                Padding="20,0,0,0"
+                RelativePanel.RightOf="HamburgerButton"
+                RelativePanel.AlignVerticalCenterWith="HamburgerButton"
+                x:Name="MainPageTitle" 
+                Foreground="{StaticResource ApplicationTheme_Highlight}" 
+                Text="Title"/>
+
+
+            <Button 
+                x:Name="RefreshButton" 
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.LeftOf="SearchButton"
+                Click="RefreshButton_Click"
+                Style="{StaticResource UIButton}">
+                &#xE149;
+            </Button>
+            <Button 
+                x:Name="SearchButton" 
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True" 
+                Click="SearchButtonClick"
+                Style="{StaticResource UIButton}">
+                &#xE094;
             </Button>
         </RelativePanel>
 

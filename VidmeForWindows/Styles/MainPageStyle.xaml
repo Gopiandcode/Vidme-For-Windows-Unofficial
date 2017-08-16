@@ -80,6 +80,15 @@
         <Setter Property="Height" Value="50" />
     </Style>
 
+    <Style x:Key="UIButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource ApplicationTheme_Highlight}"/>
+        <Setter Property="Background" Value="" />
+        <Setter Property="Template" Value="{StaticResource ButtonTemplate}" />
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+        <Setter Property="Width" Value="50" />
+        <Setter Property="Height" Value="50" />
+    </Style>
+
     <Style x:Key="MainSplitView" TargetType="SplitView">
         <Setter Property="Grid.Row"
                 Value="1" />
