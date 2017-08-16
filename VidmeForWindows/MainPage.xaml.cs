@@ -8,13 +8,16 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using VidmeForWindows.Config;
 using VidmeForWindows.Dialogs;
+using VidmeForWindows.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web;
+using Windows.Security.Credentials;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -23,29 +26,217 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace VidmeForWindows
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+
+
     public sealed partial class MainPage : Page
     {
-
+        static string resourcename = "vidmeforwindows";
         HttpClient httpclient;
+        PasswordVault vault;
+        Boolean loggedIn;
+        Task http_client_task;
+        ContentDialog dialog;
+
+        private PasswordCredential getCredentialsFromLocker()
+        {
+
+            if (vault == null) vault = new PasswordVault();
+            PasswordCredential credential = null;
+            IReadOnlyList<PasswordCredential> credentialList = null;
+
+            try
+            {
+                credentialList = vault.FindAllByResource(resourcename);
+
+            } catch(Exception)
+            {}
+            if(credentialList != null && credentialList.Count > 0)
+            {
+
+                if (credentialList.Count == 1)
+                    credential = credentialList[0];
+                else
+                    throw new NotImplementedException("More than one credential in the password vault.");
+
+            }
+            
+            return credential;
+        }
+
+
+        void configureHttpClient()
+        {
+
+            httpclient = new HttpClient();
+
+            //var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", VidmeAuthentificationClass.Application_Key, VidmeAuthentificationClass.Application_Secret)));
+            
+            //httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        }
+        
+        // Will attempt to login to the application, and change the respective values
+        async Task tryLoginAsync()
+        {
+            if (vault == null) vault = new PasswordVault();
+            if (httpclient == null) configureHttpClient();
+
+            var credentials = getCredentialsFromLocker();
+
+            if(credentials != null)
+            {
+                credentials.RetrievePassword();
+
+                // password found.
+
+                var authentication_token = credentials.Password;
+
+
+                // Apply authentication token to httpclient
+                httpclient.DefaultRequestHeaders.Add("AccessToken", authentication_token);
+
+
+                // send request to authentication_check to login
+                HttpRequestMessage request = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(Config.VidmeUrlClass.AuthenticationCheckURL),
+                    Method = HttpMethod.Post
+                };
+
+
+                HttpResponseMessage msg =  await httpclient.SendAsync(request);
+                string msg_string = await msg.Content.ReadAsStringAsync();
+
+                var response_data = JsonConvert.DeserializeObject<Models.AuthenticationCheck.Rootobject>(msg_string);
+                
+
+                if(response_data.status)
+                {
+                    loggedIn = true;
+
+                    var avatar_url = response_data.user.avatar_url;
+                    avatar_url = avatar_url.Substring(0, avatar_url.LastIndexOf('?'));
+
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        SignInIconImageContainer.Visibility = Visibility.Visible;
+                        SignInIconImage.ImageSource = new BitmapImage(new Uri(avatar_url));
+
+                        SignInIconIcon.Visibility = Visibility.Collapsed;
+
+                        SignInText.Text = response_data.user.displayname;
+                    });
+
+                } else
+                {
+                    // Means auth token is invalid. remove value
+                    vault.Remove(credentials);
+
+                    //reset httpclient
+                    configureHttpClient();
+                }
+
+
+            }
+
+        }
+
+        void tryLogin() {
+            if (http_client_task != null)
+                http_client_task = http_client_task.ContinueWith((task) => tryLoginAsync());
+            else
+                http_client_task = tryLoginAsync();
+        }
+
+        void tryLogout()
+        {
+            if(http_client_task != null)
+            {
+                http_client_task.ContinueWith(async (task) =>
+                {
+                    configureHttpClient();
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+
+                        SignInIconImageContainer.Visibility = Visibility.Collapsed;
+
+                        SignInIconIcon.Visibility = Visibility.Visible;
+
+                        SignInText.Text = "Sign in";
+
+                        loggedIn = false;
+                    });
+
+                    var credentials = getCredentialsFromLocker();
+
+                    vault.Remove(credentials);
+
+                });
+            } else
+            {
+                configureHttpClient();
+                SignInIconImageContainer.Visibility = Visibility.Collapsed;
+
+                SignInIconIcon.Visibility = Visibility.Visible;
+
+                SignInText.Text = "Sign in";
+
+                loggedIn = false;
+
+                var credentials = getCredentialsFromLocker();
+
+                vault.Remove(credentials);
+            }
+        }
+
+        async Task generateVideoFrameAsync() {
+            HttpRequestMessage request = new HttpRequestMessage()
+            {
+                RequestUri = new Uri(Config.VidmeUrlClass.FeaturedVideoURL),
+                Method = HttpMethod.Post
+            };
+
+
+            HttpResponseMessage msg = await httpclient.SendAsync(request);
+            string msg_string = await msg.Content.ReadAsStringAsync();
+
+            var response_data = JsonConvert.DeserializeObject<Models.Videos.Rootobject>(msg_string);
+
+            List<Models.Videos.Video> videos = response_data.videos.ToList();
+
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                MainFrame.Navigate(typeof(HomeFrame), videos);
+                
+            });
+        }
+
+        void generateVideoFrame()
+        {
+            if (http_client_task != null)
+                http_client_task = http_client_task.ContinueWith((task) => generateVideoFrameAsync());
+            else
+                http_client_task = generateVideoFrameAsync();
+        }
 
         public MainPage()
         {
-            httpclient = new HttpClient();
+            configureHttpClient();
+            vault = new PasswordVault();
+            loggedIn = false;
 
-            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", VidmeAuthentificationClass.Application_Key, VidmeAuthentificationClass.Application_Secret)));
+            tryLogin();
 
-
-            httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
             this.InitializeComponent();
+
+
+            generateVideoFrame();
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
@@ -74,162 +265,129 @@ namespace VidmeForWindows
             MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen; 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void HomeButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void DownloadButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FeedButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void WatchLaterButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void TeamPicksButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void HotTodayButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FreshUploadsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void CreatorsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FollowingButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FeaturedButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
-            /*var dialog = new LoginDialog();
-
-            await dialog.ShowAsync();
-
-
-            if(dialog.Result == LoginDialogState.Failed)
+            Button button = sender as Button;
+            button.IsEnabled = false;
+            if (loggedIn)
             {
-                var error_dialog = new ContentDialog() {
-                    Title = "Login error",
-                    Content = "Unfortunately we could not log you in.",
-                    PrimaryButtonText = "Ok",
-                    Background = Application.Current.Resources["ApplicationTheme_DarkForeground"] as Brush,
-                    RequestedTheme =  ElementTheme.Dark
-                };
-                
-
-                await error_dialog.ShowAsync();
-            } else if(dialog.Result == LoginDialogState.Login)
-            {
-                
-            } */
-
-            //http://gopiandcode.com/VidmeForWindows
-            /* &redirect_uri=ms-app%3A%2F%2Fs-1-15-2-2550072175-1356320857-1890753780-960594463-2124538076-1866243324-1867296574%2F */
-            Debug.WriteLine(WebAuthenticationBroker.GetCurrentApplicationCallbackUri());
-            string url = "https://vid.me/oauth/authorize?client_id=9ciI8pH3O1elCy2okUWLtsnaMrimRh7T&redirect_uri=ms-app%3A%2F%2Fs-1-15-2-2550072175-1356320857-1890753780-960594463-2124538076-1866243324-1867296574%2F&scopes=votes%20comments%20channels%20basic&response_type=token";
-            string startURL = "https://vid.me/oauth/authorize?client_id=" + VidmeAuthentificationClass.Application_ClientID + "&redirect_uri=http%3A%2F%2Fgopiandcode.com%2FVidmeForWindows&scopes=votes%20comments%20channels%20basic&response_type=code";
-            string endURL = "http://gopiandcode.com/VidmeForWindows";
-
-            Uri startURI = new Uri(startURL);
-            Uri endURI = new Uri(endURL);
-
-            try
-            {
-                var webAuthenticationResult =
-                    await Windows.Security.Authentication.Web.WebAuthenticationBroker.AuthenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.None,
-                    startURI,
-                    endURI);
-
-                Debug.WriteLine(webAuthenticationResult.ResponseData.ToString());
-
-                string auth_code = webAuthenticationResult.ResponseData.ToString();
-                auth_code = auth_code.Substring(auth_code.LastIndexOf('=') + 1);
-
-                string auth_token_uri = "https://api.vid.me/oauth/token";
-                HttpRequestMessage request = new HttpRequestMessage()
+                dialog = new ContentDialog()
                 {
-                    RequestUri = new Uri(auth_token_uri),
-                    Method = HttpMethod.Post
+                    Title = "Log out request",
+                    Content = "Would you like to log out?",
+                    PrimaryButtonText = "Log out",
+                    SecondaryButtonText = "No",
+                    RequestedTheme = ElementTheme.Dark
                 };
+                
+                ContentDialogResult result = await dialog.ShowAsync();
 
-
-                var body = new List<KeyValuePair<string, string>>();
-                body.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
-                body.Add(new KeyValuePair<string, string>("code", auth_code));
-
-                var content = new FormUrlEncodedContent(body);
-
-
-                request.Content = content;
-
-                HttpResponseMessage msg = await httpclient.SendAsync(request);
-
-                var responsecontent = await msg.Content.ReadAsStringAsync();
-
-                JsonConvert.DeserializeObject<VidmeForWindows.Models.AuthenticationResponse.Rootobject>(responsecontent);
-
-                Debug.WriteLine(responsecontent);
+                if(result == ContentDialogResult.Primary)
+                {
+                    tryLogout();
+                }
 
 
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+            else 
+                try
+                {
+                    var webAuthenticationResult =
+                        await Windows.Security.Authentication.Web.WebAuthenticationBroker.AuthenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.None,
+                        new Uri(Config.VidmeUrlClass.AuthenticationURL),
+                        new Uri(Config.VidmeUrlClass.AuthenticationRedirectURL));
+                switch (webAuthenticationResult.ResponseStatus)
+                {
+                    case WebAuthenticationStatus.Success:
 
-            
+                        string auth_code = webAuthenticationResult.ResponseData.ToString();
+                            if (string.IsNullOrEmpty(auth_code) || auth_code == "denied") { }
+                            else
+                            {
+
+                                auth_code = auth_code.Substring(auth_code.LastIndexOf('=') + 1);
+
+                                var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", VidmeAuthentificationClass.Application_Key, VidmeAuthentificationClass.Application_Secret)));
+
+                                HttpRequestMessage request = new HttpRequestMessage()
+                                {
+                                    RequestUri = new Uri(Config.VidmeUrlClass.AuthenticationTokenURL),
+                                    Method = HttpMethod.Post
+                                };
+
+                                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                                var body = new List<KeyValuePair<string, string>>();
+                                body.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
+                                body.Add(new KeyValuePair<string, string>("code", auth_code));
+
+                                var content = new FormUrlEncodedContent(body);
+
+
+                                request.Content = content;
+
+                                HttpResponseMessage msg = await httpclient.SendAsync(request);
+
+                                var responsecontent = await msg.Content.ReadAsStringAsync();
+
+                                var result = JsonConvert.DeserializeObject<Models.AuthenticationResponse.Rootobject>(responsecontent);
+
+
+                                vault.Add(new PasswordCredential("vidmeforwindows", "vidme", result.auth.token));
+
+                                var results = vault.Retrieve("vidmeforwindows", "vidme");
+
+                                tryLogin();
+                            }
+
+                        break;
+                    case WebAuthenticationStatus.ErrorHttp:
+                            dialog = new ContentDialog()
+                            {
+                                Title = "Log In Error",
+                                Content = "Could not log in.\nReason: " + webAuthenticationResult.ResponseErrorDetail,
+                                PrimaryButtonText = "Ok",
+                                RequestedTheme = ElementTheme.Dark
+                            };
+                            await dialog.ShowAsync();
+                            
+                            break;
+                }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine("Error Occurred!");
+                }
+
+            button.IsEnabled = true;
 
 
         }
 
-        private void SearchButtonClick(object sender, RoutedEventArgs e)
-        {
 
-        }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
+
+        private void Button_Click(object sender, RoutedEventArgs e) { }
+        private void HomeButton_Click(object sender, RoutedEventArgs e) { }
+        private void Button_Click_1(object sender, RoutedEventArgs e) { }
+        private void DownloadButton_Click(object sender, RoutedEventArgs e) { }
+        private void FeedButton_Click(object sender, RoutedEventArgs e) { }
+        private void WatchLaterButton_Click(object sender, RoutedEventArgs e) { }
+        private void TeamPicksButton_Click(object sender, RoutedEventArgs e) { }
+        private void HotTodayButton_Click(object sender, RoutedEventArgs e) { }
+        private void FreshUploadsButton_Click(object sender, RoutedEventArgs e) { }
+        private void CreatorsButton_Click(object sender, RoutedEventArgs e) { }
+        private void FollowingButton_Click(object sender, RoutedEventArgs e) { }
+        private void FeaturedButton_Click(object sender, RoutedEventArgs e) { }
+        private void SettingsButton_Click(object sender, RoutedEventArgs e) { }
+        private void SearchButtonClick(object sender, RoutedEventArgs e) { }
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) { }
+
     }
 }

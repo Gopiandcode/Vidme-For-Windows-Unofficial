@@ -40,7 +40,7 @@
                                                      Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseHighBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                        <!--<PointerDownThemeAnimation Storyboard.TargetName="RootGrid" /> -->
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -133,7 +133,7 @@
 
     <Style x:Key="NavigationButton_RelativePanel_Border" TargetType="Border">
         <Setter Property="Padding" Value="0,0,0,0" />
-        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Margin" Value="-3,0,4,0" />
         <Setter Property="Height" Value="50" />
         <Setter Property="Width" Value="50" />
         <Setter Property="BorderBrush" Value="{x:Null}" />

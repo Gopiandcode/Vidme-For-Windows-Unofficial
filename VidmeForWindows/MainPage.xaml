@@ -204,11 +204,40 @@
                         <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
                             <Button Style="{StaticResource NavigationButton}" Click="SignInButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="SignInButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
-                                        <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1E2;</TextBlock>
-                                    </Border>
-                                    <TextBlock RelativePanel.RightOf="SignInButtonIcon"
-                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
+                                <Grid  x:Name="SignInButtonIcon" 
+                                       Width="50"
+                                       RelativePanel.AlignLeftWithPanel="True" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"
+                                       Padding="0,0,0,0"
+                                       Margin="0,0,0,0">
+                                    <Ellipse 
+                                        x:Name="SignInIconImageContainer"
+                                        Visibility="Collapsed"
+                                        Height="32"
+                                        Width="32"
+                                        Margin="-4,0,0,0"
+                                        HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"
+                                        >
+                                        <Ellipse.Fill>
+                                            <ImageBrush x:Name="SignInIconImage"
+                                                        ImageSource="Assets/vidme-logo-big.png" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <TextBlock 
+                                        x:Name="SignInIconIcon"
+                                        Padding="0,0,0,0"
+                                        Margin="-4,0,0,0"
+                                        Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}"
+                                        >&#xE1E2;</TextBlock>
+                                    
+                                </Grid>
+
+                                <TextBlock 
+                                    x:Name="SignInText"
+                                    RelativePanel.RightOf="SignInButtonIcon"
+                                               Style="{StaticResource NavigationButton_RelativePanel_TextBlock}" Margin="4,0,0,0">
                                                Sign in
                                     </TextBlock>
                                 </RelativePanel> 

@@ -1,0 +1,30 @@
+﻿<Page
+    x:Class="VidmeForWindows.Pages.HomeFrame"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VidmeForWindows.Pages"
+    xmlns:video="using:VidmeForWindows.Models.Videos"
+    xmlns:controls="using:VidmeForWindows.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utility="using:VidmeForWindows.Utility"
+    mc:Ignorable="d">
+
+    <Grid Background="{StaticResource ApplicationTheme_DarkAccent}">
+        <Grid.Resources>
+            <utility:UrlToImageSourceConverter x:Key="UrlConverter" />
+        </Grid.Resources>
+        <GridView
+            x:Name="MainView">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="video:Video">
+                    <controls:VideoControl 
+                        VideoTitle="{x:Bind title}"
+                        VideoLength="{x:Bind duration}"
+                        VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
+                        VideoPoster="{Binding channel, ElementName=avatar_url, Converter={StaticResource UrlConverter}}"/>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+    </Grid>
+</Page>
