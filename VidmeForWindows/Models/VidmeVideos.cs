@@ -15,7 +15,7 @@ namespace VidmeForWindows.Models.Videos
         public Parameters parameters { get; set; }
         public Video[] videos { get; set; }
         public KeyValuePair<String,int> watching { get; set; }
-        public List<Viewervotes> viewerVotes { get; set; }
+        public KeyValuePair<String, int> viewerVotes { get; set; }
     }
 
     public class Page

@@ -21,6 +21,8 @@
             ScrollViewer.IsScrollInertiaEnabled="True"
             SizeChanged="OnGridViewSizeChanged"
             HorizontalContentAlignment="Stretch"
+            SelectionMode="Multiple"
+            SelectionChanged="{x:Bind MainView_SelectionChanged}"
             x:Name="MainView">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="video:Video">
@@ -42,6 +44,38 @@
                     <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                     <Setter Property="Margin" Value="2,2,2,5"/>
                     <Setter Property="Padding" Value="2"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="GridViewItem">
+                                <ListViewItemPresenter 
+
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                </ListViewItemPresenter>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </GridView.ItemContainerStyle>
 

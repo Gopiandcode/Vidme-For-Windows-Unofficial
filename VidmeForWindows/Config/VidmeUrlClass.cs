@@ -17,5 +17,13 @@ namespace VidmeForWindows.Config
 
         public static string FeaturedVideoURL = "https://api.vid.me/videos/featured";
 
+        public static string FreshVideoURL = "https://api.vid.me/videos/new";
+
+        public static string FeedVideoURL = "https://api.vid.me/videos/following";
+
+        public static string HotVideoURL = "https://api.vid.me/videos/hot/main";
+
+        public static string TeamPickVideoURL = "https://api.vid.me/videos/hot/vip";
+
     }
 }

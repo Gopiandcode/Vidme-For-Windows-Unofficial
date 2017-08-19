@@ -60,11 +60,22 @@
             <Button 
                 x:Name="RefreshButton" 
                 RelativePanel.AlignVerticalCenterWithPanel="True"
-                RelativePanel.LeftOf="SearchButton"
+                RelativePanel.LeftOf="SelectMultipleButton"
+                
                 Click="RefreshButton_Click"
                 Style="{StaticResource UIButton}">
                 &#xE149;
             </Button>
+
+            <Button
+                x:Name="SelectMultipleButton"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.LeftOf="SearchButton"
+                Style="{StaticResource UIButton}"
+                Content="&#xE094;"
+                Visibility="Collapsed"
+                />
+
             <Button 
                 x:Name="SearchButton" 
                 RelativePanel.AlignVerticalCenterWithPanel="True"

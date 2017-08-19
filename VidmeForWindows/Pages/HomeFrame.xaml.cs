@@ -25,6 +25,10 @@ namespace VidmeForWindows.Pages
     /// </summary>
     public sealed partial class HomeFrame : Page
     {
+        public delegate void SelectionChangedHandler(object sender, SelectionChangedEventArgs e);
+        public event SelectionChangedHandler SelectionChangedEvent;
+
+
         public HomeFrame()
         {
             this.InitializeComponent();
@@ -65,6 +69,12 @@ namespace VidmeForWindows.Pages
                 ((ItemsWrapGrid)MainView.ItemsPanelRoot).ItemWidth = ActualWidth;
             }
 
+        }
+
+        private void MainView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SelectionChangedEvent != null)
+                SelectionChangedEvent(sender, e);
         }
     }
 }

@@ -36,6 +36,23 @@ using Windows.UI.Xaml.Navigation;
 
 namespace VidmeForWindows
 {
+    enum CurrentPageState
+    {
+        HOME,
+        DOWNLOADS,
+        FEEDS,
+        WATCHLATER,
+        TEAMPICKS,
+        HOTTODAY,
+        FRESHUPLOADS,
+        CREATOR,
+        CREATORS,
+        FOLLOWING,
+        FEATURED,
+        SETTINGS,
+        SEARCH,
+        SEARCHRESULTS
+    };
 
 
     public sealed partial class MainPage : Page
@@ -47,6 +64,7 @@ namespace VidmeForWindows
         Task http_client_task;
         ContentDialog dialog;
         public SemaphoreSlim http_client_semaphore = new SemaphoreSlim(1, 1);
+        CurrentPageState current_state = CurrentPageState.HOME;
 
         public ProgressRing contentLoadingRing
         {
@@ -143,6 +161,8 @@ namespace VidmeForWindows
                         SignInIconIcon.Visibility = Visibility.Collapsed;
 
                         SignInText.Text = response_data.user.displayname;
+
+                        setState(current_state, true);
                     });
 
                 } else
@@ -185,6 +205,8 @@ namespace VidmeForWindows
                         SignInText.Text = "Sign in";
 
                         loggedIn = false;
+
+                        setState(current_state, true);
                     });
 
                     var credentials = getCredentialsFromLocker();
@@ -209,7 +231,7 @@ namespace VidmeForWindows
             }
         }
 
-        async Task generateVideoFrameAsync() {
+        async Task generateVideoFrameAsync(string url) {
 
             /*HttpRequestMessage request = new HttpRequestMessage()
             {
@@ -226,7 +248,7 @@ namespace VidmeForWindows
 
             List<Models.Videos.Video> videos = response_data.videos.ToList();*/
 
-            IncrementalLoadingVideoList videos = new IncrementalLoadingVideoList(Config.VidmeUrlClass.FeaturedVideoURL, http_client_semaphore, httpclient);
+            IncrementalLoadingVideoList videos = new IncrementalLoadingVideoList(url, http_client_semaphore, httpclient);
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
@@ -235,12 +257,12 @@ namespace VidmeForWindows
             });
         }
 
-        void generateVideoFrame()
+        void generateVideoFrame(string url)
         {
             if (http_client_task != null)
-                http_client_task = http_client_task.ContinueWith((task) => generateVideoFrameAsync());
+                http_client_task = http_client_task.ContinueWith((task) => generateVideoFrameAsync(url));
             else
-                http_client_task = generateVideoFrameAsync();
+                http_client_task = generateVideoFrameAsync(url);
         }
 
         public MainPage()
@@ -254,7 +276,7 @@ namespace VidmeForWindows
             this.InitializeComponent();
 
 
-            generateVideoFrame();
+            this.setState(CurrentPageState.HOME, true);
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
@@ -389,25 +411,159 @@ namespace VidmeForWindows
 
         }
 
+        private void clearStack()
+        {
+            // pop all the previous items
+            foreach (var item in MainFrame.BackStack.ToList())
+                MainFrame.BackStack.Remove(item);
+        }
+
+
+        private void setState(CurrentPageState state)
+        {
+            setState(state, false);
+        }
 
 
 
+        private void setState(CurrentPageState state, Boolean ignore_state)
+        {
+            MainSplitView.IsPaneOpen = false;
+            if (current_state == state && !ignore_state) return;
 
-        private void Button_Click(object sender, RoutedEventArgs e) { }
-        private void HomeButton_Click(object sender, RoutedEventArgs e) { }
-        private void Button_Click_1(object sender, RoutedEventArgs e) { }
-        private void DownloadButton_Click(object sender, RoutedEventArgs e) { }
-        private void FeedButton_Click(object sender, RoutedEventArgs e) { }
-        private void WatchLaterButton_Click(object sender, RoutedEventArgs e) { }
-        private void TeamPicksButton_Click(object sender, RoutedEventArgs e) { }
-        private void HotTodayButton_Click(object sender, RoutedEventArgs e) { }
-        private void FreshUploadsButton_Click(object sender, RoutedEventArgs e) { }
-        private void CreatorsButton_Click(object sender, RoutedEventArgs e) { }
-        private void FollowingButton_Click(object sender, RoutedEventArgs e) { }
-        private void FeaturedButton_Click(object sender, RoutedEventArgs e) { }
-        private void SettingsButton_Click(object sender, RoutedEventArgs e) { }
-        private void SearchButtonClick(object sender, RoutedEventArgs e) { }
-        private void RefreshButton_Click(object sender, RoutedEventArgs e) { }
+
+
+            switch (state)
+            {
+
+                case CurrentPageState.CREATOR:
+                    MainPageTitle.Text = "Creator";
+                    clearStack();
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.CREATORS:
+                    MainPageTitle.Text = "Creators";
+                    clearStack();
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.DOWNLOADS:
+                    MainPageTitle.Text = "Downloads";
+                    clearStack();
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.FEATURED:
+                    MainPageTitle.Text = "Featured";
+                    clearStack();
+                    generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.FEEDS:
+                    MainPageTitle.Text = "Feed";
+                    clearStack();
+                    if (loggedIn)
+                        generateVideoFrame(VidmeUrlClass.FeedVideoURL);
+                    else
+                        generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.FOLLOWING:
+                    MainPageTitle.Text = "Following";
+                    clearStack();
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.FRESHUPLOADS:
+                    MainPageTitle.Text = "Fresh Uploads";
+                    clearStack();
+                    generateVideoFrame(VidmeUrlClass.FreshVideoURL);
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.HOME:
+                    MainPageTitle.Text = "Home";
+                    clearStack();
+                    if (loggedIn)
+                        generateVideoFrame(VidmeUrlClass.FeedVideoURL);
+                    else
+                        generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.HOTTODAY:
+                    MainPageTitle.Text = "Hot Today";
+                    clearStack();
+                    generateVideoFrame(VidmeUrlClass.HotVideoURL);
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.SEARCH:
+                    MainPageTitle.Text = "Search";
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.SETTINGS:
+                    MainPageTitle.Text = "Settings";
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.SEARCHRESULTS:
+                    MainPageTitle.Text = "Search Results";
+                    clearStack();
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.TEAMPICKS:
+                    MainPageTitle.Text = "Team Picks";
+                    clearStack();
+                    generateVideoFrame(VidmeUrlClass.TeamPickVideoURL);
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case CurrentPageState.WATCHLATER:
+                    MainPageTitle.Text = "Watch Later";
+                    clearStack();
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+
+                    break;
+            }
+            current_state = state;
+        }
+
+
+
+        
+        private void HomeButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.HOME);
+        }
+        private void DownloadButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.DOWNLOADS);
+        }
+        private void FeedButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.FEEDS);
+        }
+        private void WatchLaterButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.WATCHLATER);
+        }
+        private void TeamPicksButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.TEAMPICKS);
+        }
+        private void HotTodayButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.HOTTODAY);
+        }
+        private void FreshUploadsButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.FRESHUPLOADS);
+        }
+        private void CreatorsButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.CREATORS);
+        }
+        private void FollowingButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.FOLLOWING);
+        }
+        private void FeaturedButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.FEATURED);
+        }
+        private void SettingsButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.SETTINGS);
+        }
+        private void SearchButtonClick(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.SEARCH);
+        }
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            setState(current_state, true);
+        }
 
     }
+
 }
