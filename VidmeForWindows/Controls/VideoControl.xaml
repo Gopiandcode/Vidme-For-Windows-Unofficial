@@ -15,14 +15,13 @@
     <UserControl.Resources>
         <utility:ElementWidthConverter x:Key="WidthConverter"/>
     </UserControl.Resources>
-    
-    
+
     <RelativePanel
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
         x:Name="LayoutRoot" >
 
-        
+
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -46,7 +45,7 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="PosterImagePanel.Padding"  Value="10,0,0,0"/>
+                        <Setter Target="VideoImage.Height"  Value="300"/>
                     </VisualState.Setters>
                 </VisualState>
 
@@ -55,6 +54,7 @@
                         <AdaptiveTrigger MinWindowWidth="650"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="VideoImage.Height"  Value="150"/>
                     </VisualState.Setters>
                 </VisualState>
 
@@ -63,6 +63,7 @@
                         <AdaptiveTrigger MinWindowWidth="800"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="VideoImage.Height"  Value="150"/>
                     </VisualState.Setters>
                 </VisualState>
 
@@ -71,10 +72,11 @@
                         <AdaptiveTrigger MinWindowWidth="1000"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="VideoImage.Height"  Value="200"/>
                     </VisualState.Setters>
                 </VisualState>
-                
-                
+
+
 
 
             </VisualStateGroup>
@@ -126,8 +128,15 @@
             Width="Auto"
             TextWrapping="Wrap"
             Foreground="{StaticResource ApplicationTheme_Highlight}"
-            FontSize="13" Text="{Binding VideoTitle, ElementName=userControl}"
+            FontSize="15" Text="{Binding VideoTitle, ElementName=userControl}"
             >Title</TextBlock>
+
+            <TextBlock
+                x:Name="VideoPosterNamePanel"
+                MaxLines="1"
+                Width="Auto"
+                Foreground="{StaticResource ApplicationTheme_RedHighlights}"
+                FontSize="13" Text="{Binding VideoPosterName, ElementName=userControl}"/>
 
             <TextBlock
             x:Name="VideoViews"

@@ -8,10 +8,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using VidmeForWindows.Config;
 using VidmeForWindows.Dialogs;
 using VidmeForWindows.Pages;
+using VidmeForWindows.Utility;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -26,6 +28,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -38,11 +41,17 @@ namespace VidmeForWindows
     public sealed partial class MainPage : Page
     {
         static string resourcename = "vidmeforwindows";
-        HttpClient httpclient;
+        public HttpClient httpclient;
         PasswordVault vault;
         Boolean loggedIn;
         Task http_client_task;
         ContentDialog dialog;
+        public SemaphoreSlim http_client_semaphore = new SemaphoreSlim(1, 1);
+
+        public ProgressRing contentLoadingRing
+        {
+            get { return ProgressRing; }
+        }
 
         private PasswordCredential getCredentialsFromLocker()
         {
@@ -73,8 +82,9 @@ namespace VidmeForWindows
 
         void configureHttpClient()
         {
-
+            http_client_semaphore.Wait();
             httpclient = new HttpClient();
+            http_client_semaphore.Release();
 
             //var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", VidmeAuthentificationClass.Application_Key, VidmeAuthentificationClass.Application_Secret)));
             
@@ -109,8 +119,10 @@ namespace VidmeForWindows
                     Method = HttpMethod.Post
                 };
 
-
+                await http_client_semaphore.WaitAsync();
                 HttpResponseMessage msg =  await httpclient.SendAsync(request);
+                http_client_semaphore.Release();
+
                 string msg_string = await msg.Content.ReadAsStringAsync();
 
                 var response_data = JsonConvert.DeserializeObject<Models.AuthenticationCheck.Rootobject>(msg_string);
@@ -138,8 +150,10 @@ namespace VidmeForWindows
                     // Means auth token is invalid. remove value
                     vault.Remove(credentials);
 
+                    http_client_semaphore.Wait();
                     //reset httpclient
                     configureHttpClient();
+                    http_client_semaphore.Release();
                 }
 
 
@@ -196,19 +210,23 @@ namespace VidmeForWindows
         }
 
         async Task generateVideoFrameAsync() {
-            HttpRequestMessage request = new HttpRequestMessage()
+
+            /*HttpRequestMessage request = new HttpRequestMessage()
             {
                 RequestUri = new Uri(Config.VidmeUrlClass.FeaturedVideoURL),
                 Method = HttpMethod.Post
             };
 
-
+            await http_client_semaphore.WaitAsync();
             HttpResponseMessage msg = await httpclient.SendAsync(request);
+            http_client_semaphore.Release();
             string msg_string = await msg.Content.ReadAsStringAsync();
 
             var response_data = JsonConvert.DeserializeObject<Models.Videos.Rootobject>(msg_string);
 
-            List<Models.Videos.Video> videos = response_data.videos.ToList();
+            List<Models.Videos.Video> videos = response_data.videos.ToList();*/
+
+            IncrementalLoadingVideoList videos = new IncrementalLoadingVideoList(Config.VidmeUrlClass.FeaturedVideoURL, http_client_semaphore, httpclient);
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
@@ -327,7 +345,9 @@ namespace VidmeForWindows
 
                                 request.Content = content;
 
+                                await http_client_semaphore.WaitAsync();
                                 HttpResponseMessage msg = await httpclient.SendAsync(request);
+                                http_client_semaphore.Release();
 
                                 var responsecontent = await msg.Content.ReadAsStringAsync();
 

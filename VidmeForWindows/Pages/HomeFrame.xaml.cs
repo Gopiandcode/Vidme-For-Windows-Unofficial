@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using VidmeForWindows.Utility;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -31,7 +32,7 @@ namespace VidmeForWindows.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            List<VidmeForWindows.Models.Videos.Video> videos = e.Parameter as List<Models.Videos.Video>;
+            IncrementalLoadingVideoList videos = e.Parameter as IncrementalLoadingVideoList;
             MainView.ItemsSource = videos;
             base.OnNavigatedTo(e);
         }

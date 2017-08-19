@@ -24,9 +24,8 @@ namespace VidmeForWindows.Controls
         public static DependencyProperty VideoLengthProperty = DependencyProperty.Register("VideoLength", typeof(string), typeof(VideoControl), null);
         public static DependencyProperty VideoThumbnailProperty = DependencyProperty.Register("VideoThumbnail", typeof(ImageSource), typeof(VideoControl), null);
         public static DependencyProperty VideoPosterProperty = DependencyProperty.Register("VideoPoster", typeof(ImageSource), typeof(VideoControl), null);
+        public static DependencyProperty VideoPosterNameProperty = DependencyProperty.Register("VideoPosterName", typeof(string), typeof(VideoControl), null);
 
-        public static DependencyProperty VideoWidthProperty = DependencyProperty.Register("VideoWidth", typeof(Double), typeof(VideoControl), null);
-        public static DependencyProperty VideoHeightProperty = DependencyProperty.Register("VideoHeight", typeof(Double), typeof(VideoControl), null);
 
 
         public string VideoTitle
@@ -59,17 +58,12 @@ namespace VidmeForWindows.Controls
             set { SetValue(VideoPosterProperty, value); }
         }
 
-        public Double VideoWidth
-        {
-            get { return (Double)GetValue(VideoWidthProperty);  }
-            set { SetValue(VideoWidthProperty, value);  }
+        public string VideoPosterName {
+            get { return (string)GetValue(VideoPosterNameProperty); }
+            set { SetValue(VideoPosterNameProperty, value); }
         }
 
-        public Double VideoHeight
-        {
-            get { return (Double)GetValue(VideoHeightProperty);}
-            set { SetValue(VideoHeightProperty, value); }
-        }
+
 
 
         public VideoControl()

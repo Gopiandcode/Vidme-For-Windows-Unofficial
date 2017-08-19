@@ -26,10 +26,13 @@ namespace VidmeForWindows.Utility
                 result = (string)value;
 
             Debug.WriteLine(result);
-            
+
 
             if (appending != null)
+            {
+                result += " ";
                 result += appending;
+            }
 
             return result;
         }

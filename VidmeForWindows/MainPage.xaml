@@ -75,6 +75,9 @@
             </Button>
         </RelativePanel>
 
+
+        <ProgressRing x:Name="ProgressRing"  Grid.Row="1" MinWidth="80" MinHeight="80" />
+
         <SplitView x:Name="MainSplitView"
                    Style="{StaticResource MainSplitView}">
             <SplitView.Pane>
@@ -259,14 +262,15 @@
                     </StackPanel>
                     
                 </RelativePanel>
+               
+
             </SplitView.Pane>
 
             <SplitView.Content>
-                <Frame x:Name="MainFrame"/>
+                   <Frame x:Name="MainFrame"/>
             </SplitView.Content>
             
         </SplitView>
-
 
 
     </Grid>

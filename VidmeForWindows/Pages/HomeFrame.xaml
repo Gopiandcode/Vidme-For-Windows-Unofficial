@@ -30,6 +30,7 @@
                         VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
                         VideoViewCount ="{Binding view_count, Converter={StaticResource StringAppender}, ConverterParameter= views}"
                         VideoPoster="{Binding user.avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                        VideoPosterName="{Binding user.username}"
                         />
                 </DataTemplate>
             </GridView.ItemTemplate>
