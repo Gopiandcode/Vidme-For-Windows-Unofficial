@@ -10,11 +10,17 @@
     xmlns:utility="using:VidmeForWindows.Utility"
     mc:Ignorable="d">
 
-    <Grid Background="{StaticResource ApplicationTheme_DarkAccent}">
+    <Grid  Background="{StaticResource ApplicationTheme_DarkAccent}" >
         <Grid.Resources>
             <utility:UrlToImageSourceConverter x:Key="UrlConverter" />
+            <utility:StringAppenderConverter x:Key="StringAppender" />
         </Grid.Resources>
         <GridView
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            ScrollViewer.IsVerticalRailEnabled="True"
+            ScrollViewer.IsScrollInertiaEnabled="True"
+            SizeChanged="OnGridViewSizeChanged"
+            HorizontalContentAlignment="Stretch"
             x:Name="MainView">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="video:Video">
@@ -22,9 +28,22 @@
                         VideoTitle="{x:Bind title}"
                         VideoLength="{x:Bind duration}"
                         VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
-                        VideoPoster="{Binding channel, ElementName=avatar_url, Converter={StaticResource UrlConverter}}"/>
+                        VideoViewCount ="{Binding view_count, Converter={StaticResource StringAppender}, ConverterParameter= views}"
+                        VideoPoster="{Binding user.avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                        />
                 </DataTemplate>
             </GridView.ItemTemplate>
+
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Margin" Value="2,2,2,5"/>
+                    <Setter Property="Padding" Value="2"/>
+                </Style>
+            </GridView.ItemContainerStyle>
+
         </GridView>
     </Grid>
 </Page>

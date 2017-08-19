@@ -113,6 +113,8 @@
       <DependentUpon>HomeFrame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\ElementWidthConverter.cs" />
+    <Compile Include="Utility\StringAppenderConverter.cs" />
     <Compile Include="Utility\UrlToImageSourceConverter.cs" />
   </ItemGroup>
   <ItemGroup>

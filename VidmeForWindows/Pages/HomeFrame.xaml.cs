@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -33,6 +34,36 @@ namespace VidmeForWindows.Pages
             List<VidmeForWindows.Models.Videos.Video> videos = e.Parameter as List<Models.Videos.Video>;
             MainView.ItemsSource = videos;
             base.OnNavigatedTo(e);
+        }
+
+        private void OnGridViewSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            
+
+            if(e.NewSize.Width > 1000)
+            {
+                Debug.WriteLine(">1000 " + ActualWidth);
+                var columns = Math.Ceiling(ActualWidth / 400);
+                ((ItemsWrapGrid)MainView.ItemsPanelRoot).ItemWidth = (e.NewSize.Width / columns) - 5;
+
+            } else if(e.NewSize.Width > 800)
+            {
+                Debug.WriteLine(">800 " + ActualWidth);
+                var columns = Math.Ceiling(ActualWidth / 400);
+                ((ItemsWrapGrid)MainView.ItemsPanelRoot).ItemWidth = (e.NewSize.Width / 3) - 5;
+
+            } else if(e.NewSize.Width > 650)
+            {
+                Debug.WriteLine(">650 " + ActualWidth);
+                //var columns = Math.Ceiling(ActualWidth / 500);
+                ((ItemsWrapGrid)MainView.ItemsPanelRoot).ItemWidth = Math.Floor(e.NewSize.Width / 2) - 5;
+
+            }  else
+            {
+                Debug.WriteLine("else " + ActualWidth);
+                ((ItemsWrapGrid)MainView.ItemsPanelRoot).ItemWidth = ActualWidth;
+            }
+
         }
     }
 }
