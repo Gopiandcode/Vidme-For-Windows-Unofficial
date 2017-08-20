@@ -18,7 +18,7 @@ namespace VidmeForWindows.Utility
 
             Debug.WriteLine(appending);
 
-            if (appending != null && appending.Equals("views"))
+            if (appending != null && (appending.Equals("views") || appending.Equals("videos") || appending.Equals("followers")))
             {
                 Int32 val = (Int32)value;
                 result = val.ToString();

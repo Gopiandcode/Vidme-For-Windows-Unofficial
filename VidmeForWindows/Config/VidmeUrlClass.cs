@@ -27,5 +27,11 @@ namespace VidmeForWindows.Config
 
         public static string ChannelURL = "https://api.vid.me/channels";
 
+        public static string FollowingUserURL(string id) => "https://api.vid.me/user/" + id + "/following";
+
+        public static string FeaturedUserURL = "https://api.vid.me/users/featured";
+
+        public static string SearchUserURL(string text) => "https://api.vid.me/users/suggest?text=" + text;
+
     }
 }

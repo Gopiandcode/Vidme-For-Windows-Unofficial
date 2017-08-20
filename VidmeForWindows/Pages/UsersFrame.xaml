@@ -1,0 +1,171 @@
+﻿<Page
+    x:Class="VidmeForWindows.Pages.UsersFrame"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VidmeForWindows.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:user="using:VidmeForWindows.Models.User"
+    xmlns:control="using:VidmeForWindows.Controls"
+    xmlns:utility="using:VidmeForWindows.Utility"
+    >
+    <Page.Resources>
+        <utility:UrlToImageSourceConverter x:Key="UrlConverter"/>
+        <utility:StringAppenderConverter x:Key="StringAppender"/>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationTheme_DarkAccent}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="110"/>
+        </Grid.ColumnDefinitions>
+
+        <RelativePanel 
+            Padding="2,2,2,2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+            <TextBox
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                x:Name="SearchTextBox"
+                MaxWidth="500"
+                MinWidth="300"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{StaticResource ApplicationTheme_DarkMidground}"
+                Foreground="{StaticResource ApplicationTheme_Highlight}"
+                BorderBrush="{StaticResource ApplicationTheme_RedAccent}"
+                TextChanging="SearchTextBoxTextChanged"/>
+
+            <Button 
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.RightOf="SearchTextBox"
+                x:Name="ClearButton"
+                Foreground="{StaticResource ApplicationTheme_Highlight}"
+                Click="ClearTextHandler"
+                Style="{StaticResource AccentButtonStyle}">
+                <SymbolIcon Symbol="Clear"/>
+            </Button>
+        </RelativePanel>
+
+        <Button x:Name="UserSourceFlyout"
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="2,2,2,2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{StaticResource ApplicationTheme_DarkForeground}"
+                >
+            <Button.Content>
+                <RelativePanel >
+                    <TextBlock 
+                        Padding="0,0,2,0"
+                        Foreground="{StaticResource ApplicationTheme_RedHighlights}" 
+                        x:Name="UserSourceFlyoutText"/>
+                    <TextBlock 
+                        RelativePanel.RightOf="UserSourceFlyoutText" 
+                        RelativePanel.AlignVerticalCenterWith="UserSourceFlyoutText"
+                        Foreground="{StaticResource ApplicationTheme_RedHighlights}" 
+                        Text="&#xE099;" 
+                        FontFamily="Segoe MDL2 Assets" />
+                </RelativePanel>
+            </Button.Content>
+            <Button.Flyout>
+                <Flyout>
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style TargetType="FlyoutPresenter">
+                            <Setter Property="Background" Value="{StaticResource ApplicationTheme_DarkForeground}"/>
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                    <StackPanel 
+                        Background="{StaticResource ApplicationTheme_DarkForeground}"
+                        
+                        Orientation="Vertical">
+                        <RadioButton
+                            Foreground="{StaticResource ApplicationTheme_RedHighlights}"
+                            x:Name="UsersFromFollowing" GroupName="UsersFrom" Checked="VideoSource_Changed"
+                            Style="{StaticResource RadioButtonStyle}">
+                            Following</RadioButton>
+                        <RadioButton 
+                            Foreground="{StaticResource ApplicationTheme_RedHighlights}"
+                            x:Name="UsersFromFeatured" GroupName="UsersFrom" Checked="VideoSource_Changed"
+                            Style="{StaticResource RadioButtonStyle}">
+                            Featured</RadioButton>
+                    </StackPanel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+
+        <GridView
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            ScrollViewer.IsVerticalRailEnabled="True"
+            SizeChanged="OnGridViewSizeChanged"
+            ItemClick="UserClicked_Handler"
+            x:Name="MainView">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="user:User">
+                    <control:UserControls
+                        UserAvatarImage="{x:Bind avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                        Username="{x:Bind username}"
+                        VideoCount="{x:Bind video_count, Converter={StaticResource StringAppender}, ConverterParameter=videos}"
+                        FollowerCount="{x:Bind follower_count, Converter={StaticResource StringAppender}, ConverterParameter=followers}"
+                        />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Margin" Value="5,5,5,7"/>
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="GridViewItem">
+                                <ListViewItemPresenter 
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                </ListViewItemPresenter>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </GridView.ItemContainerStyle>
+
+
+        </GridView>
+        
+        
+        
+        
+    </Grid>
+</Page>

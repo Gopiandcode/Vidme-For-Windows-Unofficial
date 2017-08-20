@@ -65,7 +65,7 @@ namespace VidmeForWindows
         Boolean loggedIn;
         Task http_client_task;
         ContentDialog dialog;
-        string channel_video_url;
+        string id;
         public SemaphoreSlim http_client_semaphore = new SemaphoreSlim(1, 1);
         CurrentPageState current_state = CurrentPageState.HOME;
 
@@ -154,7 +154,7 @@ namespace VidmeForWindows
                 if(response_data.status)
                 {
                     loggedIn = true;
-
+                    id = response_data.user.user_id;
                     var avatar_url = response_data.user.avatar_url;
                     avatar_url = avatar_url.Substring(0, avatar_url.LastIndexOf('?'));
 
@@ -298,6 +298,11 @@ namespace VidmeForWindows
                 http_client_task = http_client_task.ContinueWith((task) => generateChannelFrameAsync());
             else
                 http_client_task = generateChannelFrameAsync();
+        }
+
+        void generateUserList()
+        {
+
         }
 
         public MainPage()
@@ -539,6 +544,11 @@ namespace VidmeForWindows
                 case CurrentPageState.FOLLOWING:
                     MainPageTitle.Text = "Following";
                     clearStack();
+                    MainFrame.Navigate(typeof(UsersFrame), new UserFrameParams() {
+                        id = id,
+                        httpClient = httpclient,
+                        http_client_semaphore = http_client_semaphore
+                    });
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
                     break;
                 case CurrentPageState.FRESHUPLOADS:
@@ -610,7 +620,6 @@ namespace VidmeForWindows
             setState(CurrentPageState.CHANNELVIDEOS);
             MainPageTitle.Text = title;
             generateVideoFrame(channel_url);
-            channel_video_url = channel_url;
 
         }
         

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -13,11 +12,10 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using VidmeForWindows.Models.Videos;
 
 namespace VidmeForWindows.Utility
 {
-    /*class IncrementalLoadingVideoList : ObservableCollection<Models.Videos.Video>, ISupportIncrementalLoading
+    abstract class IncrementalLoadingList<T,P> : ObservableCollection<T>, ISupportIncrementalLoading
     {
         private int offset = 0;
         private int limit = 10;
@@ -31,19 +29,26 @@ namespace VidmeForWindows.Utility
         private SemaphoreSlim http_client_semaphore;
         private HttpClient httpClient;
 
-        public IncrementalLoadingVideoList(string url, SemaphoreSlim http_client_semaphore, HttpClient httpClient)
+        public IncrementalLoadingList(string url, SemaphoreSlim http_client_semaphore, HttpClient httpClient)
         {
             this.url = url;
             this.http_client_semaphore = http_client_semaphore;
             this.httpClient = httpClient;
         }
 
-        public IncrementalLoadingVideoList(string url, int limit, SemaphoreSlim http_client_semaphore, HttpClient httpClient)
+        public IncrementalLoadingList(string url, int limit, SemaphoreSlim http_client_semaphore, HttpClient httpClient)
         {
-            this.limit = Math.Min(100,limit);
+            this.limit = Math.Min(100, limit);
             this.url = url;
             this.http_client_semaphore = http_client_semaphore;
             this.httpClient = httpClient;
+        }
+
+        public abstract List<T> extactData(P result);
+
+        public virtual string get_retrieve_url(string url, double limit, double offset)
+        {
+            return url + "?limit=" + limit.ToString() + "&offset=" + offset.ToString();
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -59,9 +64,9 @@ namespace VidmeForWindows.Utility
                     progressRing.IsIndeterminate = true;
                 });
 
-                
+
                 // Retrieve items
-                string retrieve_url = url + "?limit=" + limit.ToString() + "&offset=" + offset.ToString();
+                string retrieve_url = get_retrieve_url(url, limit, offset);
 
 
                 HttpRequestMessage request = new HttpRequestMessage()
@@ -76,29 +81,29 @@ namespace VidmeForWindows.Utility
 
 
                 string msg_string = await msg.Content.ReadAsStringAsync();
-                List<Models.Videos.Video> videos;
+                List<T> videos;
 
                 try
                 {
-                    var response_data = JsonConvert.DeserializeObject<Models.Videos.Rootobject>(msg_string);
+                    var response_data = JsonConvert.DeserializeObject<P>(msg_string);
 
-                   videos = response_data.videos.ToList();
+                    videos = extactData(response_data);
                     offset += videos.Count;
                 }
                 catch (Exception e)
                 {
 
-                    videos = new List<Models.Videos.Video>();
+                    videos = new List<T>();
                 }
 
-                if(videos.Count == 0)
+                if (videos.Count == 0)
                 {
                     hasmoreitems = false;
                 }
-                
+
                 await coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    foreach (Models.Videos.Video video in videos)
+                    foreach (T video in videos)
                     {
                         this.Add(video);
                     }
@@ -112,22 +117,6 @@ namespace VidmeForWindows.Utility
 
         }
 
-        
-    }*/
 
-    class IncrementalLoadingVideoList : IncrementalLoadingList<VidmeForWindows.Models.Videos.Video, VidmeForWindows.Models.Videos.Rootobject>
-    {
-        public IncrementalLoadingVideoList(string url, SemaphoreSlim http_client_semaphore, HttpClient httpClient) : base(url, http_client_semaphore, httpClient)
-        {
-        }
-
-        public IncrementalLoadingVideoList(string url, int limit, SemaphoreSlim http_client_semaphore, HttpClient httpClient) : base(url, limit, http_client_semaphore, httpClient)
-        {
-        }
-
-        public override List<Video> extactData(Rootobject result)
-        {
-            return result.videos.ToList();
-        }
     }
 }

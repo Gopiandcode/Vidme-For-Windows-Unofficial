@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Name="userControl"
+    x:Class="VidmeForWindows.Controls.UserControls"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VidmeForWindows.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{x:Null}"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <RelativePanel
+        Background="{StaticResource ApplicationTheme_DarkAccent}">
+            <Ellipse 
+                    x:Name="UserImagePanel"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                    
+                     Width="90" Height="90" 
+                     Stroke="{StaticResource ApplicationTheme_RedHighlights}"
+                     StrokeThickness="3">
+                <Ellipse.Fill>
+                    <ImageBrush 
+                        x:Name="UserImageBrushPanel"
+                        ImageSource="{Binding UserAvatarImage, ElementName=userControl}"/>
+                </Ellipse.Fill>
+            </Ellipse>
+
+        <TextBlock
+            Width="Auto"
+            MaxLines="2"
+            Padding="10,5,10,0"
+            RelativePanel.Below="UserImagePanel"
+            RelativePanel.AlignHorizontalCenterWith="UserImagePanel"
+            FontSize="18"
+            Text="{Binding Username, ElementName=userControl}"
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            x:Name="UserNamePanel"/>
+
+        <TextBlock
+            x:Name="VideoCountPanel"
+            RelativePanel.AlignHorizontalCenterWith="UserImagePanel"
+            RelativePanel.Below="UserNamePanel"
+            FontSize="13"
+            Width="Auto"
+            Foreground="{StaticResource ApplicationTheme_RedForeground}"
+            Text="{Binding VideoCount, ElementName=userControl}"/>
+
+        <TextBlock
+            x:Name="FollowersCountPanel"
+            RelativePanel.AlignHorizontalCenterWith="UserImagePanel"
+            RelativePanel.Below="VideoCountPanel"
+            FontSize="13"
+            Foreground="{StaticResource ApplicationTheme_RedMidground}"
+            Text="{Binding FollowerCount, ElementName=userControl}"/>
+
+    </RelativePanel>
+</UserControl>
