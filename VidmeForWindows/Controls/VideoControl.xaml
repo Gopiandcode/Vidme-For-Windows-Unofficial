@@ -13,7 +13,7 @@
              >
 
     <UserControl.Resources>
-        <utility:ElementWidthConverter x:Key="WidthConverter"/>
+        <utility:DoubleToTimeStringConverter x:Key="TimeConverter"/>
     </UserControl.Resources>
 
     <RelativePanel
@@ -161,7 +161,7 @@
             x:Name="VideoLengthPanel"
             Foreground="{StaticResource ApplicationTheme_Highlight}"
             FontSize="15"
-            Text="{Binding VideoLength, ElementName=userControl}"/>
+            Text="{Binding VideoLength, ElementName=userControl, Converter={StaticResource TimeConverter}}"/>
         </Border>
     </RelativePanel>
 </UserControl>

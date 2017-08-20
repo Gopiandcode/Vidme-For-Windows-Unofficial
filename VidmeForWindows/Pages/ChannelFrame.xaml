@@ -1,55 +1,54 @@
 ﻿<Page
-    x:Class="VidmeForWindows.Pages.HomeFrame"
+    x:Class="VidmeForWindows.Pages.ChannelFrame"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:VidmeForWindows.Pages"
-    xmlns:video="using:VidmeForWindows.Models.Videos"
     xmlns:controls="using:VidmeForWindows.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utility="using:VidmeForWindows.Utility"
+    xmlns:channel="using:VidmeForWindows.Models.Channels"
     mc:Ignorable="d">
+    <Page.Resources>
+        <utility:UrlToImageSourceConverter x:Key="UrlConverter" x:Name="UrlConverter"/>
+    </Page.Resources>
 
-    <Grid  Background="{StaticResource ApplicationTheme_DarkAccent}" >
-        <Grid.Resources>
-            <utility:UrlToImageSourceConverter x:Key="UrlConverter" />
-            <utility:StringAppenderConverter x:Key="StringAppender" />
-        </Grid.Resources>
-        <GridView
+        <Grid  Background="{StaticResource ApplicationTheme_DarkAccent}" >
+            <Grid.Resources>
+                  </Grid.Resources>
+            <GridView
             ScrollViewer.VerticalScrollBarVisibility="Hidden"
             ScrollViewer.IsVerticalRailEnabled="True"
             ScrollViewer.IsScrollInertiaEnabled="True"
             SizeChanged="OnGridViewSizeChanged"
             HorizontalContentAlignment="Stretch"
             SelectionMode="Single"
+            ItemClick="ChannelItemClick_Handler"
             IsItemClickEnabled="True"
-            ItemClick="VideoClicked_Handler"
             SelectionChanged="{x:Bind MainView_SelectionChanged}"
             x:Name="MainView">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="video:Video">
-                    <controls:VideoControl 
-                        VideoTitle="{x:Bind title}"
-                        VideoLength="{x:Bind duration}"
-                        VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
-                        VideoViewCount ="{Binding view_count, Converter={StaticResource StringAppender}, ConverterParameter= views}"
-                        VideoPoster="{Binding user.avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
-                        VideoPosterName="{Binding user.username}"
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="channel:Channel">
+                        <controls:ChannelControl
+                        ChannelPosterImage="{Binding avatar_url, Converter={StaticResource UrlConverter}}"
+                        ChannelThumbnailImage="{Binding cover_url, Converter={StaticResource UrlConverter}}"
+                        ChannelTitleString="{Binding title}"
+                        ChannelVideoCountString="{Binding video_count}"
                         />
-                </DataTemplate>
-            </GridView.ItemTemplate>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
 
-            <GridView.ItemContainerStyle>
-                <Style TargetType="GridViewItem">
-                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Setter Property="Margin" Value="2,2,2,5"/>
-                    <Setter Property="Padding" Value="2"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="GridViewItem">
-                                <ListViewItemPresenter 
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="2,2,2,5"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <ListViewItemPresenter 
 
                                     SelectionCheckMarkVisualEnabled="False"
                                     CheckBrush="White"
@@ -74,13 +73,13 @@
                                     ContentMargin="{TemplateBinding Padding}"
                                     CheckMode="Overlay"
                                     >
-                                </ListViewItemPresenter>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </GridView.ItemContainerStyle>
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
 
-        </GridView>
-    </Grid>
-</Page>
+            </GridView>
+        </Grid>
+    </Page>

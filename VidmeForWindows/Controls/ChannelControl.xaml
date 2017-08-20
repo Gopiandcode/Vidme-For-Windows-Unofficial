@@ -1,0 +1,139 @@
+﻿<UserControl
+    x:Name="userControl"
+    x:Class="VidmeForWindows.Controls.ChannelControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VidmeForWindows.Controls"
+    BorderBrush="{x:Null}"
+    xmlns:utility="using:VidmeForWindows.Utility"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <utility:StringAppenderConverter x:Key="StringAppender"/>
+    </UserControl.Resources>
+
+    <RelativePanel
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            x:Name="LayoutRoot" >
+
+
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+
+                    <!--<VisualStateGroup.Transitions>
+                
+                <VisualTransition GeneratedDuration="0:0:0.2">
+                
+                    <VisualTransition.GeneratedEasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" Exponent="7" />
+                    </VisualTransition.GeneratedEasingFunction>
+                
+                </VisualTransition>
+
+            </VisualStateGroup.Transitions> -->
+
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="0"/>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                        <Setter Target="ChannelImage.Height"  Value="300"/>
+                        </VisualState.Setters>
+                    </VisualState>
+
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="650"/>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                        <Setter Target="ChannelImage.Height"  Value="150"/>
+                        </VisualState.Setters>
+                    </VisualState>
+
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="800"/>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                        <Setter Target="ChannelImage.Height"  Value="150"/>
+                        </VisualState.Setters>
+                    </VisualState>
+
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="1000"/>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                        <Setter Target="ChannelImage.Height"  Value="200"/>
+                        </VisualState.Setters>
+                    </VisualState>
+
+
+
+
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <!-- Width="{Binding ActualWidth, ElementName=userControl, Converter={StaticResource WidthConverter}, ConverterParameter=*0.945}" -->
+            <!-- Height="{Binding ActualWidth, ElementName=userControl, Converter={StaticResource WidthConverter}, ConverterParameter=*0.42}"-->
+            <Border
+            x:Name="ChannelImage"
+            RelativePanel.AlignHorizontalCenterWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Height="150"
+            Margin="10,10,10,5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+
+            BorderBrush="{StaticResource ApplicationTheme_RedHighlights}"
+            BorderThickness="3"
+            >
+                <Image
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Stretch="Fill"
+                
+            Source="{Binding ChannelThumbnailImage, ElementName=userControl}" />
+            </Border>
+            <Ellipse
+            x:Name="PosterImagePanel"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            Width="50"
+            Height="50"
+            Margin="10,0,0,10"
+            Stroke="{StaticResource ApplicationTheme_RedHighlights}"
+            StrokeThickness="2">
+                <Ellipse.Fill>
+                <ImageBrush ImageSource="{Binding ChannelPosterImage, ElementName=userControl}" />
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <StackPanel Orientation="Vertical"
+                    Margin="10,0,0,10"
+                    RelativePanel.Below="ChannelImage"
+                    RelativePanel.RightOf="PosterImagePanel">
+                <TextBlock
+            x:Name="ChannelTitlePanel"
+            MaxLines="1"
+            Width="Auto"
+            TextWrapping="Wrap"
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            FontSize="15" Text="{Binding ChannelTitleString, ElementName=userControl}"
+            >Title</TextBlock>
+
+                <TextBlock
+            x:Name="ChannelCount"
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            FontSize="12" Text="{Binding ChannelVideoCountString, ElementName=userControl, Converter={StaticResource StringAppender}, ConverterParameter=Videos}">100 Videos</TextBlock>
+            </StackPanel>
+
+        </RelativePanel>
+    </UserControl>

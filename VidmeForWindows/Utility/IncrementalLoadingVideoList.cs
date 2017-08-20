@@ -26,7 +26,7 @@ namespace VidmeForWindows.Utility
             get { return hasmoreitems; }
         }
         private bool hasmoreitems = true;
-        private string url;
+        public string url;
         private SemaphoreSlim http_client_semaphore;
         private HttpClient httpClient;
 
@@ -48,14 +48,14 @@ namespace VidmeForWindows.Utility
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
 
-            ProgressRing progressRing = ((Window.Current.Content as Frame).Content as MainPage).contentLoadingRing;
+            ProgressBar progressRing = ((Window.Current.Content as Frame).Content as MainPage).contentLoadingRing;
             CoreDispatcher coreDispatcher = Window.Current.Dispatcher;
 
             return Task.Run<LoadMoreItemsResult>(async () =>
             {
                 await coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    progressRing.Visibility = Visibility.Visible;
+                    progressRing.IsIndeterminate = true;
                 });
 
                 
@@ -102,7 +102,7 @@ namespace VidmeForWindows.Utility
                         this.Add(video);
                     }
 
-                    progressRing.Visibility = Visibility.Collapsed;
+                    progressRing.IsIndeterminate = false;
                 });
 
                 return new LoadMoreItemsResult() { Count = count };

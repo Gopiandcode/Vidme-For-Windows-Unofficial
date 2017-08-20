@@ -25,18 +25,27 @@ namespace VidmeForWindows.Pages
     /// </summary>
     public sealed partial class HomeFrame : Page
     {
-        public delegate void SelectionChangedHandler(object sender, SelectionChangedEventArgs e);
-        public event SelectionChangedHandler SelectionChangedEvent;
+        Button SelectMultipleButton;
+        public string video_url;
 
+        ~HomeFrame()
+        {
+            SelectMultipleButton.Click -= MainPage_SelectMultipleButton;
+
+        }
 
         public HomeFrame()
         {
+            SelectMultipleButton = ((Window.Current.Content as Frame).Content as MainPage).PublicSelectMultipleButton;
+            SelectMultipleButton.Click += MainPage_SelectMultipleButton;
+
             this.InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             IncrementalLoadingVideoList videos = e.Parameter as IncrementalLoadingVideoList;
+            video_url = videos.url;
             MainView.ItemsSource = videos;
             base.OnNavigatedTo(e);
         }
@@ -73,8 +82,51 @@ namespace VidmeForWindows.Pages
 
         private void MainView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SelectionChangedEvent != null)
-                SelectionChangedEvent(sender, e);
+            if (MainView.SelectionMode == ListViewSelectionMode.Multiple) {
+                if (MainView.SelectedItems.Count != 0)
+                {
+                    // display a play buttons
+                    SelectMultipleButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    SelectMultipleButton.Content = "\uE102";
+
+                } else
+                {
+                    // display a select multiple
+
+                    SelectMultipleButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    SelectMultipleButton.Content = '\uE133';
+                }
+            }
+        }
+
+        private void MainPage_SelectMultipleButton(object sender, RoutedEventArgs e)
+        {
+            if (MainView.SelectionMode == ListViewSelectionMode.Single)
+            {
+
+                SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkForeground"] as SolidColorBrush).Color);
+                MainView.IsItemClickEnabled = false;
+                MainView.SelectionMode = ListViewSelectionMode.Multiple;
+                
+            } else
+            {
+                if (MainView.SelectedItems.Count != 0) {
+
+                    // Play the selected videos
+
+                } else
+                {
+                    MainView.SelectionMode = ListViewSelectionMode.Single;
+                    MainView.IsItemClickEnabled = true;
+                    SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkMidground"] as SolidColorBrush).Color);
+                }
+            }
+            
+        }
+
+        private void VideoClicked_Handler(object sender, ItemClickEventArgs e)
+        {
+            Debug.WriteLine("Video Clicked!");
         }
     }
 }

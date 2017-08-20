@@ -25,5 +25,7 @@ namespace VidmeForWindows.Config
 
         public static string TeamPickVideoURL = "https://api.vid.me/videos/hot/vip";
 
+        public static string ChannelURL = "https://api.vid.me/channels";
+
     }
 }

@@ -27,7 +27,7 @@ namespace VidmeForWindows.Utility
 
             if (string.IsNullOrWhiteSpace(url))
             {
-                return new BitmapImage();
+                return new BitmapImage(new Uri("https://d1ckdm8qo2u5d0.cloudfront.net/ai/users/36550/avatar.square-medium-200x200.jpg"));
             } else 
                 return new BitmapImage(new Uri(url));
         }

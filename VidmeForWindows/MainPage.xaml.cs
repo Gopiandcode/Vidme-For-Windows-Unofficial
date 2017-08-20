@@ -21,6 +21,7 @@ using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web;
 using Windows.Security.Credentials;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -36,17 +37,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace VidmeForWindows
 {
-    enum CurrentPageState
+    public enum CurrentPageState
     {
         HOME,
         DOWNLOADS,
         FEEDS,
         WATCHLATER,
-        TEAMPICKS,
+        TAGS,
         HOTTODAY,
         FRESHUPLOADS,
         CREATOR,
-        CREATORS,
+        CHANNELS,
+        CHANNELVIDEOS,
         FOLLOWING,
         FEATURED,
         SETTINGS,
@@ -63,13 +65,16 @@ namespace VidmeForWindows
         Boolean loggedIn;
         Task http_client_task;
         ContentDialog dialog;
+        string channel_video_url;
         public SemaphoreSlim http_client_semaphore = new SemaphoreSlim(1, 1);
         CurrentPageState current_state = CurrentPageState.HOME;
 
-        public ProgressRing contentLoadingRing
+        public ProgressBar contentLoadingRing
         {
             get { return ProgressRing; }
         }
+
+        public Button PublicSelectMultipleButton => SelectMultipleButton;
 
         private PasswordCredential getCredentialsFromLocker()
         {
@@ -265,6 +270,36 @@ namespace VidmeForWindows
                 http_client_task = generateVideoFrameAsync(url);
         }
 
+        async Task generateChannelFrameAsync()
+        {
+            HttpRequestMessage request = new HttpRequestMessage()
+            {
+                RequestUri = new Uri(Config.VidmeUrlClass.ChannelURL),
+                Method = HttpMethod.Get
+            };
+
+            await http_client_semaphore.WaitAsync();
+            HttpResponseMessage msg = await httpclient.SendAsync(request);
+            http_client_semaphore.Release();
+
+            string msg_string = await msg.Content.ReadAsStringAsync();
+
+            var response_data = JsonConvert.DeserializeObject<Models.Channels.Rootobject>(msg_string);
+
+
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                MainFrame.Navigate(typeof(ChannelFrame), response_data.data.ToList());
+            });
+        }
+
+        void generateChannelFrame()
+        {
+            if (http_client_task != null)
+                http_client_task = http_client_task.ContinueWith((task) => generateChannelFrameAsync());
+            else
+                http_client_task = generateChannelFrameAsync();
+        }
+
         public MainPage()
         {
             configureHttpClient();
@@ -272,6 +307,9 @@ namespace VidmeForWindows
             loggedIn = false;
 
             tryLogin();
+
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
             this.InitializeComponent();
 
@@ -411,6 +449,7 @@ namespace VidmeForWindows
 
         }
 
+
         private void clearStack()
         {
             // pop all the previous items
@@ -419,31 +458,62 @@ namespace VidmeForWindows
         }
 
 
-        private void setState(CurrentPageState state)
+        public void setState(CurrentPageState state)
         {
             setState(state, false);
         }
 
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (MainFrame.CanGoBack)
+            {
+                e.Handled = true;
 
 
-        private void setState(CurrentPageState state, Boolean ignore_state)
+
+                switch (current_state) {
+                    case CurrentPageState.CHANNELVIDEOS:
+                        setState(CurrentPageState.CHANNELS);
+                        break;
+                }
+
+                if (MainFrame.BackStackDepth > 0)
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                }
+                else
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                }
+            }
+        }
+
+    public void setState(CurrentPageState state, Boolean ignore_state)
         {
             MainSplitView.IsPaneOpen = false;
             if (current_state == state && !ignore_state) return;
-
-
+            SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkMidground"] as SolidColorBrush).Color);
+            SelectMultipleButton.Content = '\uE133';
+            
+                RefreshButton.Visibility = Visibility.Visible;
 
             switch (state)
             {
-
                 case CurrentPageState.CREATOR:
                     MainPageTitle.Text = "Creator";
                     clearStack();
                     SelectMultipleButton.Visibility = Visibility.Visible;
                     break;
-                case CurrentPageState.CREATORS:
-                    MainPageTitle.Text = "Creators";
+                case CurrentPageState.CHANNELVIDEOS:
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    RefreshButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.CHANNELS:
+                    MainPageTitle.Text = "Channels";
                     clearStack();
+                    generateChannelFrame();
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
                     break;
                 case CurrentPageState.DOWNLOADS:
@@ -505,11 +575,10 @@ namespace VidmeForWindows
                     clearStack();
                     SelectMultipleButton.Visibility = Visibility.Visible;
                     break;
-                case CurrentPageState.TEAMPICKS:
-                    MainPageTitle.Text = "Team Picks";
+                case CurrentPageState.TAGS:
+                    MainPageTitle.Text = "Tags";
                     clearStack();
-                    generateVideoFrame(VidmeUrlClass.TeamPickVideoURL);
-                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
                     break;
                 case CurrentPageState.WATCHLATER:
                     MainPageTitle.Text = "Watch Later";
@@ -518,11 +587,32 @@ namespace VidmeForWindows
 
                     break;
             }
+            
             current_state = state;
+
+            foreach (PageStackEntry p in MainFrame.ForwardStack)
+            {
+                MainFrame.ForwardStack.Remove(p);
+            }
+            if (MainFrame.BackStackDepth > 0)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            } else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
+
         }
 
 
+        public void displayChannelVideos(string channel_url, string title)
+        {
+            setState(CurrentPageState.CHANNELVIDEOS);
+            MainPageTitle.Text = title;
+            generateVideoFrame(channel_url);
+            channel_video_url = channel_url;
 
+        }
         
         private void HomeButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.HOME);
@@ -536,8 +626,8 @@ namespace VidmeForWindows
         private void WatchLaterButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.WATCHLATER);
         }
-        private void TeamPicksButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.TEAMPICKS);
+        private void TagsButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.TAGS);
         }
         private void HotTodayButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.HOTTODAY);
@@ -545,8 +635,8 @@ namespace VidmeForWindows
         private void FreshUploadsButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.FRESHUPLOADS);
         }
-        private void CreatorsButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.CREATORS);
+        private void ChannelsButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.CHANNELS);
         }
         private void FollowingButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.FOLLOWING);

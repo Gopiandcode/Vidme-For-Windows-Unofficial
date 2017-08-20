@@ -72,7 +72,7 @@
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.LeftOf="SearchButton"
                 Style="{StaticResource UIButton}"
-                Content="&#xE094;"
+                Content="&#xE133;"
                 Visibility="Collapsed"
                 />
 
@@ -84,11 +84,21 @@
                 Style="{StaticResource UIButton}">
                 &#xE094;
             </Button>
+            <ProgressBar 
+                RelativePanel.RightOf="HamburgerButton"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                HorizontalAlignment="Stretch" 
+                Foreground="{StaticResource ApplicationTheme_RedHighlights}" 
+                VerticalAlignment="Bottom" 
+                x:Name="ProgressRing" 
+                IsIndeterminate="True"  
+                Canvas.ZIndex="2" />
+
         </RelativePanel>
 
 
-        <ProgressRing x:Name="ProgressRing"  Grid.Row="1" MinWidth="80" MinHeight="80" />
-
+        
         <SplitView x:Name="MainSplitView"
                    Style="{StaticResource MainSplitView}">
             <SplitView.Pane>
@@ -143,14 +153,14 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}" Click="TeamPicksButton_Click">
+                            <Button Style="{StaticResource NavigationButton}" Click="TagsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="TeamPicksButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border x:Name="TagsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE840;</TextBlock>
                                     </Border>
-                                    <TextBlock RelativePanel.RightOf="TeamPicksButtonIcon"
+                                    <TextBlock RelativePanel.RightOf="TagsButtonIcon"
                                                Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
-                                        Team Picks
+                                        Tags
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
@@ -176,14 +186,14 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}" Click="CreatorsButton_Click">
+                            <Button Style="{StaticResource NavigationButton}" Click="ChannelsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="CreatorsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border x:Name="ChannelsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE11D;</TextBlock>
                                     </Border>
-                                    <TextBlock RelativePanel.RightOf="CreatorsButtonIcon"
+                                    <TextBlock RelativePanel.RightOf="ChannelsButtonIcon"
                                                Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
-                                               Creators
+                                               Channels
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>

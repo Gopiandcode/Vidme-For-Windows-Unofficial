@@ -179,4 +179,7 @@
         <Setter Property="Background" Value="{StaticResource ApplicationTheme_DarkMidground}" />
     </Style>
 
+
+    
+    
 </ResourceDictionary>
