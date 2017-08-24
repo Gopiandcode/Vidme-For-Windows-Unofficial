@@ -47,7 +47,9 @@ namespace VidmeForWindows.Config
 
         public static string LikedVideosUserURL(string id) => "https://api.vid.me/videos/likes?user=" + id;
 
-        public static string UserAblumsURL(string id) => "https://api.vid.me/user/" + id + "/albums";
+        public static string UserAlbumsURL(string id) => "https://api.vid.me/user/" + id + "/albums";
+
+        public static string AlbumVideosURL(string id) => "https://api.vid.me/album/" + id + "/videos";
 
     }
 }

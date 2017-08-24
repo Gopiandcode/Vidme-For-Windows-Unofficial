@@ -51,6 +51,16 @@ namespace VidmeForWindows.Utility
             return url + "?limit=" + limit.ToString() + "&offset=" + offset.ToString();
         }
 
+        public virtual HttpRequestMessage get_request_message(string url)
+        {
+            return new HttpRequestMessage()
+            {
+                RequestUri = new Uri(url),
+                Method = HttpMethod.Post
+            };
+
+        }
+
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
 
@@ -69,11 +79,7 @@ namespace VidmeForWindows.Utility
                 string retrieve_url = get_retrieve_url(url, limit, offset);
 
 
-                HttpRequestMessage request = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri(retrieve_url),
-                    Method = HttpMethod.Post
-                };
+                HttpRequestMessage request = get_request_message(retrieve_url);
 
                 await http_client_semaphore.WaitAsync();
                 HttpResponseMessage msg = await httpClient.SendAsync(request);

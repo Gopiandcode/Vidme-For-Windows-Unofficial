@@ -36,9 +36,10 @@ namespace VidmeForWindows.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnNavigatedFrom(e);
-            SelectMultipleButton.Click -= MainPage_SelectMultipleButton;
 
+            SelectMultipleButton.Click -= MainPage_SelectMultipleButton;
+            MainView.ItemsSource = null;
+            base.OnNavigatedFrom(e);
         }
 
         public HomeFrame()

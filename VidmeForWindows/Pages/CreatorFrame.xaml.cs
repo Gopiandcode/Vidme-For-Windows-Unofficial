@@ -61,6 +61,8 @@ namespace VidmeForWindows.Pages
             FollowingView.ItemsSource = null;
             FollowersView.ItemsSource = null;
 
+            AlbumView.ItemsSource = null;
+
 
             CoverImage.Source = null;
 
@@ -133,6 +135,13 @@ namespace VidmeForWindows.Pages
             CoverImage.Source = new BitmapImage(new Uri(user.cover_url));
             
             UserIdImage.ImageSource = new BitmapImage(new Uri(user.avatar_url));
+
+            VidmeUser.Text = user.displayname == null ? "" : user.displayname;
+
+            VidmeViewCount.Text = user.follower_count + " followers";
+
+            UserText.Text = user.bio == null ? "" : user.bio;
+
             GridViewUserVideos.ItemsSource = new IncrementalLoadingVideoList(Config.VidmeUrlClass.UserVideoURL(user.user_id), http_client_semaphore, httpClient);
 
             GridViewUpvotedVideos.ItemsSource = new IncrementalLoadingVideoList(Config.VidmeUrlClass.LikedVideosUserURL(user.user_id), http_client_semaphore, httpClient);
@@ -140,6 +149,8 @@ namespace VidmeForWindows.Pages
             FollowingView.ItemsSource = new IncrementalLoadingUserList(Config.VidmeUrlClass.FollowingUserURL(user.user_id) + "?", http_client_semaphore, httpClient);
 
             FollowersView.ItemsSource = new IncrementalLoadingUserList(Config.VidmeUrlClass.FollowersUserURL(user.user_id) + "?", http_client_semaphore, httpClient);
+
+            AlbumView.ItemsSource = new IncrementalLoadingAlbumList(Config.VidmeUrlClass.UserAlbumsURL(user.user_id), http_client_semaphore, httpClient);
 
 
             base.OnNavigatedTo(e);
@@ -300,7 +311,22 @@ namespace VidmeForWindows.Pages
         private void ChannelItemClick_Handler(object sender, ItemClickEventArgs e)
         {
 
+            Models.Album.Album alb = e.ClickedItem as Models.Album.Album;
+            ((Window.Current.Content as Frame).Content as MainPage).setState(CurrentPageState.CHANNELALBUMVIDEOS);
+            ((Window.Current.Content as Frame).Content as MainPage).PublicMainFrame.Navigate(typeof(HomeFrame), 
+                
+                new IncrementalLoadingVideoList(
+                Config.VidmeUrlClass.AlbumVideosURL(alb.album_id),
+                http_client_semaphore, 
+                httpClient,
+                new IncrementalLoadingVideoList.retrieve_request_message( (string url) => {
+                    return new HttpRequestMessage()
+                    {
+                        RequestUri = new Uri(url),
+                        Method = HttpMethod.Get
+                    }; ; })));
         }
+
 
         private void UserClicked_Handler(object sender, ItemClickEventArgs e)
         {
@@ -315,7 +341,7 @@ namespace VidmeForWindows.Pages
                 user = person
             };
 
-            ((Window.Current.Content as Frame).Content as MainPage).Navigate(typeof(CreatorFrame), item);
+            ((Window.Current.Content as Frame).Content as MainPage).CreatorNavigate(typeof(CreatorFrame), item);
         }
 
         private void OnFollowerViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -353,6 +379,9 @@ namespace VidmeForWindows.Pages
         {
             PivotItem pivot = (PivotItem)(sender as Pivot).SelectedItem;
 
+
+
+
             GridViewUpvotedVideos.SelectionMode = ListViewSelectionMode.Single;
             GridViewUserVideos.SelectionMode = ListViewSelectionMode.Single;
 
@@ -368,21 +397,40 @@ namespace VidmeForWindows.Pages
             {
                 case "Home":
                     SelectMultipleButton.Visibility = Visibility.Visible;
+
                     break;
                 case "Upvoted":
                     SelectMultipleButton.Visibility = Visibility.Visible;
+
+
                     break;
                 case "Albums":
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
+
+
+
+
                     break;
                 case "Following":
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
+
+
                     break;
                 case "Comments":
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
+
+
+
+
+
                     break;
                 case "Followers":
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
+
+
+
+
+
                     break;
             }
         }

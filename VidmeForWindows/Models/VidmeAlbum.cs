@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace VidmeForWindows.Models.Album
 {
@@ -27,7 +31,11 @@ namespace VidmeForWindows.Models.Album
         public string user_id { get; set; }
         public string user_image_url { get; set; }
         public string url { get; set; }
-        public string album_image_url { get; set; }
+
+
+
+
+
         public string full_url { get; set; }
         public string title { get; set; }
         public string description { get; set; }
@@ -36,6 +44,11 @@ namespace VidmeForWindows.Models.Album
         public int view_count { get; set; }
         public bool _private { get; set; }
         public bool is_default { get; set; }
+
+
+
     }
+
+   
 
 }

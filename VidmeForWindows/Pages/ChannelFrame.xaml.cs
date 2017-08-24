@@ -36,6 +36,12 @@ namespace VidmeForWindows.Pages
             base.OnNavigatedTo(e);
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            MainView.ItemsSource = null;
+            base.OnNavigatedFrom(e);
+        }
+
         private void OnGridViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
 

@@ -71,7 +71,7 @@
                         RelativePanel.AlignLeftWithPanel="True"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Stretch="Fill"
+                        Stretch="UniformToFill"
                         Height="300"  
                         Source="ms-appx:///Assets/vidme-logo-big.png"/>
                         <StackPanel
@@ -106,17 +106,29 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             Padding="15,5,15,5"
-                            Text="Vidme User"/>
+                            Text="Vidme User"
+                                    Name="VidmeUser"/>
 
                                 <TextBlock 
                             VerticalAlignment="Center"
                             Padding="15,5,15,5"
                             FontSize="10"
-                            Text="1000,000 Follow"/>
+                            Text="1000,000 Follow"
+                                    Name="VidmeViewCount"/>
                                 <Button
                                 Content="Follow"/>
                             </StackPanel>
                         </ScrollViewer>
+                        <TextBlock Name="UserText"
+                                   RelativePanel.Below="UserInfo"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   TextWrapping="WrapWholeWords"
+                                   Padding="10,10,10,1"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="Vidme is a channel for world peace. Love life!"/>
+
                     </RelativePanel>
                 </GridView.Header>
                     <GridView.ItemTemplate>
@@ -284,7 +296,7 @@
                     <DataTemplate x:DataType="albums:Album">
                         <controls:ChannelControl 
                         ChannelPosterImage="{Binding user_image_url, Converter={StaticResource UrlConverter}}"
-                        ChannelThumbnailImage="{Binding album_image_url, Converter={StaticResource UrlConverter}}"
+                        ChannelThumbnailImage="ms-appx:///Assets/vidme-logo-big.png"
                         ChannelTitleString="{Binding title}"
                         ChannelVideoCountString="{Binding video_count}"
                         />

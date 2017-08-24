@@ -48,8 +48,10 @@ namespace VidmeForWindows
         HOTTODAY,
         FRESHUPLOADS,
         CREATOR,
+        CREATORPAGE,
         CHANNELS,
         CHANNELVIDEOS,
+        CHANNELALBUMVIDEOS,
         FOLLOWING,
         FEATURED,
         SETTINGS,
@@ -69,6 +71,8 @@ namespace VidmeForWindows
         string id;
         public SemaphoreSlim http_client_semaphore = new SemaphoreSlim(1, 1);
         CurrentPageState current_state = CurrentPageState.HOME;
+        CurrentPageState last_state;
+        Models.User.User current_user;
 
         public ProgressBar contentLoadingRing
         {
@@ -105,14 +109,27 @@ namespace VidmeForWindows
             return credential;
         }
 
-        public void Navigate(Type type, object o)
+        public void CreatorNavigate(Type type, CreatorFrameParams o)
         {
+
+            // Navigation method for creators.
+            // store the last state, set state to creator.
+
             MainFrame.Navigate(type, o);
-            while(MainFrame.BackStackDepth > 1)
+            current_user = o.user;
+
+            MainPageTitle.Text = o.user.displayname == null ? "" : o.user.displayname;
+
+            while (MainFrame.BackStackDepth > 1)
                 MainFrame.BackStack.Remove(MainFrame.BackStack.Last());
             if (MainFrame.BackStackDepth > 0)
             {
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                if (current_state != CurrentPageState.CREATORPAGE)
+                {
+                    last_state = current_state;
+                    current_state = CurrentPageState.CREATORPAGE;
+                }
             }
             else
             {
@@ -514,6 +531,23 @@ namespace VidmeForWindows
                     case CurrentPageState.TAGSVIDEOS:
                         setState(CurrentPageState.TAGS);
                         break;
+                    case CurrentPageState.CREATORPAGE:
+                        setState(last_state);
+                        if (MainFrame.BackStackDepth > 0)
+                        {
+                            MainFrame.GoBack();
+                        }
+                        break;
+                    case CurrentPageState.CHANNELALBUMVIDEOS:
+                        SelectMultipleButton.Visibility = Visibility.Visible;
+                        RefreshButton.Visibility = Visibility.Visible;
+                        if (MainFrame.BackStackDepth > 0)
+                        {
+                            MainFrame.GoBack();
+                        }
+                        current_state = CurrentPageState.CREATORPAGE;
+                        break;
+
                     default:
                         if (MainFrame.BackStackDepth > 0)
                         {
@@ -590,6 +624,21 @@ namespace VidmeForWindows
                     clearStack();
                     SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.CREATORPAGE:
+                    MainPageTitle.Text = current_user.displayname;
+                    MainFrame.Navigate(typeof(CreatorFrame), new CreatorFrameParams()
+                    {
+                        httpClient = httpclient,
+                        http_client_semaphore = http_client_semaphore,
+                        id = id,
+                        user = current_user
+                    });
+                    MainFrame.BackStack.Remove(MainFrame.BackStack.Last());
+                    break;
+                case CurrentPageState.CHANNELALBUMVIDEOS:
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    RefreshButton.Visibility = Visibility.Collapsed;
                     break;
                 case CurrentPageState.FRESHUPLOADS:
                     MainPageTitle.Text = "Fresh Uploads";

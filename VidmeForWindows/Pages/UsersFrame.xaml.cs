@@ -120,7 +120,7 @@ namespace VidmeForWindows.Pages
                 user = user
             };
 
-            ((Window.Current.Content as Frame).Content as MainPage).Navigate(typeof(CreatorFrame), item);
+            ((Window.Current.Content as Frame).Content as MainPage).CreatorNavigate(typeof(CreatorFrame), item);
                 
         }
 

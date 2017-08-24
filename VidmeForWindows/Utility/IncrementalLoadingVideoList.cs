@@ -117,12 +117,29 @@ namespace VidmeForWindows.Utility
 
     class IncrementalLoadingVideoList : IncrementalLoadingList<VidmeForWindows.Models.Videos.Video, VidmeForWindows.Models.Videos.Rootobject>
     {
+
+        public delegate HttpRequestMessage retrieve_request_message(string url);
+        public retrieve_request_message optional_message = null;
+
         public IncrementalLoadingVideoList(string url, SemaphoreSlim http_client_semaphore, HttpClient httpClient) : base(url, http_client_semaphore, httpClient)
         {
         }
 
         public IncrementalLoadingVideoList(string url, int limit, SemaphoreSlim http_client_semaphore, HttpClient httpClient) : base(url, limit, http_client_semaphore, httpClient)
         {
+        }
+
+        public IncrementalLoadingVideoList(string url,  SemaphoreSlim http_client_semaphore, HttpClient httpClient, retrieve_request_message optional_message) : base(url, http_client_semaphore, httpClient)
+        {
+            this.optional_message = optional_message;
+        }
+
+        public override HttpRequestMessage get_request_message(string url)
+        {
+            if (optional_message != null)
+                return optional_message(url);
+            else
+                return base.get_request_message(url);
         }
 
         public override List<Video> extactData(Rootobject result)

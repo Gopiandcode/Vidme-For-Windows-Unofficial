@@ -57,6 +57,11 @@ namespace VidmeForWindows.Pages
             base.OnNavigatedTo(e);
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            TagListView.ItemsSource = null;
+        }
 
 
         void setState(State state, string url)
