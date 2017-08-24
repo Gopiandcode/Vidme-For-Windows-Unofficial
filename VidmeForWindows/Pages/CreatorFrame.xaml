@@ -25,9 +25,11 @@
     </Page.Resources>
 
     <Pivot 
+        Name="MainPivot"
         ManipulationMode="RotateInertia"
         Foreground="{StaticResource ApplicationTheme_RedForeground}"
         Background="{StaticResource ApplicationTheme_DarkAccent}" Style="{StaticResource UserPivotStyle}" 
+        SelectionChanged="PivotSelectionChanged"
         >
 
         <PivotItem
@@ -36,67 +38,13 @@
             VerticalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch" Margin="0"
+            
             >
             <PivotItem.Header>
                 <TextBlock Text="Home" FontSize="20"/>
             </PivotItem.Header>
-            <StackPanel>
-                <RelativePanel
-                    HorizontalAlignment="Stretch" 
-                    VerticalAlignment="Stretch">
-                    <Image 
-                        Name="CoverImage"
-                        RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Stretch="Fill"
-                        Height="300"  
-                        Source="ms-appx:///Assets/vidme-logo-big.png"/>
-                    <StackPanel
-                        Orientation="Vertical"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.Above="UserInfo"
-                        >
-                        <Ellipse
-                            
-                            Height="110"
-                            Width="110"
-                            Margin="20,0,0,20"
-                            >
-                            <Ellipse.Fill>
-                                <ImageBrush x:Name="UserIdImage" ImageSource="ms-appx:///Assets/vidme-logo-big.png"/>
-                            </Ellipse.Fill>
-                        </Ellipse>
-                    </StackPanel>
-                    
-                    <ScrollViewer
-                        Name="UserInfo"
-                        RelativePanel.Below="CoverImage"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True"
-                        HorizontalScrollBarVisibility="Hidden"
-                        >
-                    <StackPanel 
-                    Orientation="Horizontal" 
-                    Background="{StaticResource ApplicationTheme_DarkMidground}"
-                    >
-                        <TextBlock 
-                            VerticalAlignment="Center"
-                            FontSize="15"
-                            Padding="15,5,15,5"
-                            Text="Vidme User"/>
 
-                        <TextBlock 
-                            VerticalAlignment="Center"
-                            Padding="15,5,15,5"
-                            FontSize="10"
-                            Text="1000,000 Follow"/>
-                            <Button
-                                Content="Follow"/>
-                    </StackPanel>
-                    </ScrollViewer>
-                    <GridView 
+                <GridView 
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.AlignRightWithPanel="True"
                         RelativePanel.Below="UserInfo"
@@ -113,9 +61,67 @@
                         Name="GridViewUserVideos"
                         
                         >
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="videos:Video">
-                                <controls:VideoControl 
+                    <GridView.Header>
+                    <RelativePanel
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch">
+                        <Image 
+                        Name="CoverImage"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Stretch="Fill"
+                        Height="300"  
+                        Source="ms-appx:///Assets/vidme-logo-big.png"/>
+                        <StackPanel
+                        Orientation="Vertical"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.Above="UserInfo"
+                        >
+                            <Ellipse
+                            
+                            Height="110"
+                            Width="110"
+                            Margin="20,0,0,20"
+                            >
+                                <Ellipse.Fill>
+                                    <ImageBrush x:Name="UserIdImage" ImageSource="ms-appx:///Assets/vidme-logo-big.png"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </StackPanel>
+
+                        <ScrollViewer
+                        Name="UserInfo"
+                        RelativePanel.Below="CoverImage"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        HorizontalScrollBarVisibility="Hidden"
+                        >
+                            <StackPanel 
+                    Orientation="Horizontal" 
+                    Background="{StaticResource ApplicationTheme_DarkMidground}"
+                    >
+                                <TextBlock 
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Padding="15,5,15,5"
+                            Text="Vidme User"/>
+
+                                <TextBlock 
+                            VerticalAlignment="Center"
+                            Padding="15,5,15,5"
+                            FontSize="10"
+                            Text="1000,000 Follow"/>
+                                <Button
+                                Content="Follow"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </RelativePanel>
+                </GridView.Header>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="videos:Video">
+                            <controls:VideoControl 
                                         VideoTitle="{x:Bind title}"
                                         VideoLength="{x:Bind duration}"
                                         VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
@@ -123,20 +129,20 @@
                                         VideoPoster="{Binding user.avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
                                         VideoPosterName="{Binding user.username}"
                                     />
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
 
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Margin" Value="2,2,2,5"/>
-                                <Setter Property="Padding" Value="2"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="GridViewItem">
-                                            <ListViewItemPresenter 
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Margin" Value="2,2,2,5"/>
+                            <Setter Property="Padding" Value="2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="GridViewItem">
+                                        <ListViewItemPresenter 
 
                                     SelectionCheckMarkVisualEnabled="False"
                                     CheckBrush="White"
@@ -161,18 +167,16 @@
                                     ContentMargin="{TemplateBinding Padding}"
                                     CheckMode="Overlay"
                                     >
-                                            </ListViewItemPresenter>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </GridView.ItemContainerStyle>
+                                        </ListViewItemPresenter>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GridView.ItemContainerStyle>
 
-                    </GridView>
-                </RelativePanel>
-            </StackPanel>
-            
-            
+                </GridView>
+
+
         </PivotItem>
 
         <PivotItem

@@ -46,7 +46,7 @@ namespace VidmeForWindows.Pages
         public CreatorFrame()
         {
             SelectMultipleButton = ((Window.Current.Content as Frame).Content as MainPage).PublicSelectMultipleButton;
-            SelectMultipleButton.Click += MainPage_SelectMultipleButton;
+            SelectMultipleButton.Click += this.MainPage_SelectMultipleButton;
 
             this.InitializeComponent();
         }
@@ -55,12 +55,70 @@ namespace VidmeForWindows.Pages
         {
 
             base.OnNavigatedFrom(e);
-            SelectMultipleButton.Click -= MainPage_SelectMultipleButton;
+            SelectMultipleButton.Click -= this.MainPage_SelectMultipleButton;
+            GridViewUserVideos.ItemsSource = null;
+            GridViewUpvotedVideos.ItemsSource = null;
+            FollowingView.ItemsSource = null;
+            FollowersView.ItemsSource = null;
+
+
+            CoverImage.Source = null;
+
+            UserIdImage.ImageSource = null;
+
         }
 
         private void MainPage_SelectMultipleButton(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            string selection_name = ((MainPivot.SelectedItem as PivotItem).Header as TextBlock).Text;
+
+            GridView MainView = null;
+
+            switch(selection_name)
+            {
+                case "Home":
+                    MainView = GridViewUserVideos;
+                    break;
+                case "Upvoted":
+                    MainView = GridViewUpvotedVideos;
+                    break;
+                case "Albums":
+                    return;
+                    break;
+                case "Following":
+                    return;
+                    break;
+                case "Comments":
+                    return;
+                    break;
+                case "Followers":
+                    return;
+                    break;
+            }
+
+            if (MainView.SelectionMode == ListViewSelectionMode.Single)
+            {
+
+                SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkForeground"] as SolidColorBrush).Color);
+                MainView.IsItemClickEnabled = false;
+                MainView.SelectionMode = ListViewSelectionMode.Multiple;
+
+            }
+            else
+            {
+                if (MainView.SelectedItems.Count != 0)
+                {
+
+                    // Play the selected videos
+
+                }
+                else
+                {
+                    MainView.SelectionMode = ListViewSelectionMode.Single;
+                    MainView.IsItemClickEnabled = true;
+                    SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkMidground"] as SolidColorBrush).Color);
+                }
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -73,6 +131,7 @@ namespace VidmeForWindows.Pages
             id = input.id;
 
             CoverImage.Source = new BitmapImage(new Uri(user.cover_url));
+            
             UserIdImage.ImageSource = new BitmapImage(new Uri(user.avatar_url));
             GridViewUserVideos.ItemsSource = new IncrementalLoadingVideoList(Config.VidmeUrlClass.UserVideoURL(user.user_id), http_client_semaphore, httpClient);
 
@@ -125,7 +184,24 @@ namespace VidmeForWindows.Pages
 
         private void MainView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            GridView selection = sender as GridView;
+            if (selection.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                if (selection.SelectedItems.Count != 0)
+                {
+                    // display a play buttons
+                    SelectMultipleButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    SelectMultipleButton.Content = "\uE102";
 
+                }
+                else
+                {
+                    // display a select multiple
+
+                    SelectMultipleButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    SelectMultipleButton.Content = '\uE133';
+                }
+            }
         }
 
         private void OnUpvotedGridViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -270,6 +346,44 @@ namespace VidmeForWindows.Pages
             {
                 Debug.WriteLine("else " + ActualWidth);
                 ((ItemsWrapGrid)FollowersView.ItemsPanelRoot).ItemWidth = ActualWidth;
+            }
+        }
+
+        private void PivotSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            PivotItem pivot = (PivotItem)(sender as Pivot).SelectedItem;
+
+            GridViewUpvotedVideos.SelectionMode = ListViewSelectionMode.Single;
+            GridViewUserVideos.SelectionMode = ListViewSelectionMode.Single;
+
+
+            GridViewUpvotedVideos.IsItemClickEnabled = true;
+            GridViewUserVideos.IsItemClickEnabled = true;
+
+            SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkMidground"] as SolidColorBrush).Color);
+            SelectMultipleButton.Content = '\uE133';
+
+
+            switch ((pivot.Header as TextBlock).Text)
+            {
+                case "Home":
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case "Upvoted":
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    break;
+                case "Albums":
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case "Following":
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case "Comments":
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
+                case "Followers":
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
+                    break;
             }
         }
     }
