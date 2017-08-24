@@ -143,6 +143,7 @@
     <Compile Include="Utility\ElementWidthConverter.cs" />
     <Compile Include="Utility\IncrementalDataLoader.cs" />
     <Compile Include="Utility\IncrementalLoadingAlbumList.cs" />
+    <Compile Include="Utility\IncrementalLoadingCommentList.cs" />
     <Compile Include="Utility\IncrementalLoadingTagList.cs" />
     <Compile Include="Utility\IncrementalLoadingUserList.cs" />
     <Compile Include="Utility\IncrementalLoadingVideoList.cs" />

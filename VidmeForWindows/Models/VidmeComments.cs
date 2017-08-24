@@ -19,6 +19,8 @@ namespace VidmeForWindows.Models.Comment
         public int total { get; set; }
         public int limit { get; set; }
         public int offset { get; set; }
+        public string order { get; set; }
+        public string direction { get; set; }
     }
 
     public class Comment
@@ -37,6 +39,7 @@ namespace VidmeForWindows.Models.Comment
         public User user { get; set; }
         public Viewervote viewerVote { get; set; }
         public Video video { get; set; }
+        public Comment[] comments { get; set; }
     }
 
     public class User

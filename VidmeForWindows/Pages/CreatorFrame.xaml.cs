@@ -58,11 +58,12 @@ namespace VidmeForWindows.Pages
             SelectMultipleButton.Click -= this.MainPage_SelectMultipleButton;
             GridViewUserVideos.ItemsSource = null;
             GridViewUpvotedVideos.ItemsSource = null;
+
             FollowingView.ItemsSource = null;
             FollowersView.ItemsSource = null;
 
             AlbumView.ItemsSource = null;
-
+            CommentsView.ItemsSource = null;
 
             CoverImage.Source = null;
 
@@ -151,7 +152,7 @@ namespace VidmeForWindows.Pages
             FollowersView.ItemsSource = new IncrementalLoadingUserList(Config.VidmeUrlClass.FollowersUserURL(user.user_id) + "?", http_client_semaphore, httpClient);
 
             AlbumView.ItemsSource = new IncrementalLoadingAlbumList(Config.VidmeUrlClass.UserAlbumsURL(user.user_id), http_client_semaphore, httpClient);
-
+            CommentsView.ItemsSource = new IncrementalLoadingCommentList(Config.VidmeUrlClass.UserCommentsURL(user.user_id), http_client_semaphore, httpClient);
 
             base.OnNavigatedTo(e);
         }
@@ -433,6 +434,42 @@ namespace VidmeForWindows.Pages
 
                     break;
             }
+        }
+
+        private void OnCommentsViewSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //FollowersView
+            if (e.NewSize.Width > 1000)
+            {
+                Debug.WriteLine(">1000 " + ActualWidth);
+                var columns = Math.Ceiling(ActualWidth / 400);
+                ((ItemsWrapGrid)CommentsView.ItemsPanelRoot).ItemWidth = (e.NewSize.Width / columns) - 5;
+
+            }
+            else if (e.NewSize.Width > 800)
+            {
+                Debug.WriteLine(">800 " + ActualWidth);
+                var columns = Math.Ceiling(ActualWidth / 400);
+                ((ItemsWrapGrid)CommentsView.ItemsPanelRoot).ItemWidth = (e.NewSize.Width / 3) - 5;
+
+            }
+            else if (e.NewSize.Width > 650)
+            {
+                Debug.WriteLine(">650 " + ActualWidth);
+                //var columns = Math.Ceiling(ActualWidth / 500);
+                ((ItemsWrapGrid)CommentsView.ItemsPanelRoot).ItemWidth = Math.Floor(e.NewSize.Width / 2) - 5;
+
+            }
+            else
+            {
+                Debug.WriteLine("else " + ActualWidth);
+                ((ItemsWrapGrid)CommentsView.ItemsPanelRoot).ItemWidth = ActualWidth;
+            }
+        }
+
+        private void CommentClicked_Handler(object sender, ItemClickEventArgs e)
+        {
+
         }
     }
 }

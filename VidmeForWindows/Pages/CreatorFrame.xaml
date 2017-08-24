@@ -11,6 +11,7 @@
     xmlns:utility="using:VidmeForWindows.Utility"
     xmlns:albums="using:VidmeForWindows.Models.Album"
     xmlns:user="using:VidmeForWindows.Models.User"
+    xmlns:comment="using:VidmeForWindows.Models.Comment"
     Background="{StaticResource ApplicationTheme_DarkAccent}">
     <Page.Resources>
         <ResourceDictionary>
@@ -436,6 +437,69 @@
                 <TextBlock Text="Comments" FontSize="20"/>
             </PivotItem.Header>
 
+            <GridView
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            ScrollViewer.IsVerticalRailEnabled="True"
+            SizeChanged="OnCommentsViewSizeChanged"
+            ItemClick="CommentClicked_Handler"
+                IsItemClickEnabled="True"
+            Name="CommentsView">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="comment:Comment">
+                        <controls:SingleCommentControl
+                        UserAvater="{x:Bind user.avatar_url, Converter={StaticResource UrlConverter}}"
+                        UserName="{x:Bind user.username}"
+                        Comment="{x:Bind body}"
+                        VideoName="{x:Bind video.title}"
+                        />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="5,5,5,7"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <ListViewItemPresenter 
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+
+
+            </GridView>
+            
+            
         </PivotItem>
         
         

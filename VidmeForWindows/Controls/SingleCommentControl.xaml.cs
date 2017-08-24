@@ -19,6 +19,52 @@ namespace VidmeForWindows.Controls
 {
     public sealed partial class SingleCommentControl : UserControl
     {
+        public static DependencyProperty UserAvatarProperty = DependencyProperty.Register("UserAvatar", typeof(ImageSource), typeof(SingleCommentControl), null);
+        public static DependencyProperty UserNameProperty = DependencyProperty.Register("UserName", typeof(string), typeof(SingleCommentControl), null);
+        public static DependencyProperty UserPostDateProperty = DependencyProperty.Register("UserPostDate", typeof(string), typeof(SingleCommentControl), null);
+
+
+        public static DependencyProperty VideoNameProperty = DependencyProperty.Register("VideoName", typeof(string), typeof(SingleCommentControl), null);
+        public static DependencyProperty CommentProperty = DependencyProperty.Register("Comment", typeof(string), typeof(SingleCommentControl), null);
+
+
+        public ImageSource UserAvater
+        {
+            get { return (ImageSource)GetValue(UserAvatarProperty); }
+            set { SetValue(UserAvatarProperty, value); }
+        }
+
+
+        public  string UserName
+        {
+            get { return (string)GetValue(UserNameProperty); }
+            set { SetValue(UserNameProperty, value); }
+        }
+
+
+        public string UserPostDate
+        {
+            get { return (string)GetValue(UserPostDateProperty); }
+            set { SetValue(UserPostDateProperty, value); }
+        }
+
+        public string VideoName
+        {
+            get { return (string)GetValue(VideoNameProperty); }
+            set { SetValue(VideoNameProperty, value); }
+        }
+
+        public string Comment
+        {
+            get { return (string)GetValue(CommentProperty); }
+            set { SetValue(CommentProperty, value); }
+        }
+
+
+
+
+
+
         public SingleCommentControl()
         {
             this.InitializeComponent();
