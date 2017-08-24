@@ -45,20 +45,20 @@
 
 
         <RelativePanel Grid.Row="0" Background="{StaticResource ApplicationTheme_DarkMidground}">
-            <Button x:Name="HamburgerButton" Style="{StaticResource HamburgerButton}" Click="HamburgerButtonClick">
+            <Button Name="HamburgerButton" Style="{StaticResource HamburgerButton}" Click="HamburgerButtonClick">
                 &#xE700;
             </Button>
             <TextBlock 
                 Padding="20,0,0,0"
                 RelativePanel.RightOf="HamburgerButton"
                 RelativePanel.AlignVerticalCenterWith="HamburgerButton"
-                x:Name="MainPageTitle" 
+                Name="MainPageTitle" 
                 Foreground="{StaticResource ApplicationTheme_Highlight}" 
                 Text="Title"/>
 
 
             <Button 
-                x:Name="RefreshButton" 
+                Name="RefreshButton" 
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.LeftOf="SelectMultipleButton"
                 
@@ -68,7 +68,7 @@
             </Button>
 
             <Button
-                x:Name="SelectMultipleButton"
+                Name="SelectMultipleButton"
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.LeftOf="SearchButton"
                 Style="{StaticResource UIButton}"
@@ -77,7 +77,7 @@
                 />
 
             <Button 
-                x:Name="SearchButton" 
+                Name="SearchButton" 
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True" 
                 Click="SearchButtonClick"
@@ -91,7 +91,7 @@
                 HorizontalAlignment="Stretch" 
                 Foreground="{StaticResource ApplicationTheme_RedHighlights}" 
                 VerticalAlignment="Bottom" 
-                x:Name="ProgressRing" 
+                Name="ProgressRing" 
                 IsIndeterminate="True"  
                 Canvas.ZIndex="2" />
 
@@ -99,18 +99,18 @@
 
 
         
-        <SplitView x:Name="MainSplitView"
+        <SplitView Name="MainSplitView"
                    Style="{StaticResource MainSplitView}">
             <SplitView.Pane>
                 <RelativePanel Style="{StaticResource NavigationPanel}">
                     <ScrollViewer
-                        x:Name="ScrollViewer"
+                        Name="ScrollViewer"
                         Style="{StaticResource NavigationScrollViewer}"
                         RelativePanel.Above="SettingsSection">
                         <StackPanel Orientation="Vertical">
                             <Button Style="{StaticResource NavigationButton}" Click="HomeButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="HomeButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="HomeButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE80F;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="HomeButtonIcon"
@@ -121,7 +121,7 @@
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="DownloadButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="DownloadButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="DownloadButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE896;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="DownloadButtonIcon"
@@ -133,7 +133,7 @@
                             <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
                             <Button Style="{StaticResource NavigationButton}" Click="FeedButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="FeedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="FeedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE12A;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="FeedButtonIcon"
@@ -144,7 +144,7 @@
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="WatchLaterButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="WatchLaterButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="WatchLaterButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xED5a;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="WatchLaterButtonIcon"
@@ -155,7 +155,7 @@
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="TagsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="TagsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="TagsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE840;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="TagsButtonIcon"
@@ -166,7 +166,7 @@
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="HotTodayButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="HotTodayButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="HotTodayButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE82F;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="HotTodayButtonIcon"
@@ -177,7 +177,7 @@
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="FreshUploadsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="FreshUploadsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="FreshUploadsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1ED;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="FreshUploadsButtonIcon"
@@ -188,7 +188,7 @@
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="ChannelsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="ChannelsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="ChannelsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE11D;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="ChannelsButtonIcon"
@@ -197,20 +197,20 @@
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
-                            <Button Style="{StaticResource NavigationButton}" Click="FollowingButton_Click">
+                            <Button Style="{StaticResource NavigationButton}" Click="CreatorButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="FollowingButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="CreatorButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE125;</TextBlock>
                                     </Border>
-                                    <TextBlock RelativePanel.RightOf="FollowingButtonIcon"
+                                    <TextBlock RelativePanel.RightOf="CreatorButtonIcon"
                                                Style="{StaticResource NavigationButton_RelativePanel_TextBlock}">
-                                               Following
+                                               Creators
                                     </TextBlock>
                                 </RelativePanel> 
                             </Button>
                             <Button Style="{StaticResource NavigationButton}" Click="FeaturedButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="FeaturedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="FeaturedButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE1CE;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="FeaturedButtonIcon"
@@ -223,12 +223,12 @@
                         </StackPanel> 
                     </ScrollViewer>
                     <StackPanel 
-                        x:Name="SettingsSection"
+                        Name="SettingsSection"
                         Style="{StaticResource NavigationSettingsSection}">
                         <Rectangle HorizontalAlignment="Stretch" Height="2px" Fill="{StaticResource ApplicationTheme_DarkForeground}"/>
                             <Button Style="{StaticResource NavigationButton}" Click="SignInButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                <Grid  x:Name="SignInButtonIcon" 
+                                <Grid  Name="SignInButtonIcon" 
                                        Width="50"
                                        RelativePanel.AlignLeftWithPanel="True" 
                                        HorizontalAlignment="Center" 
@@ -236,7 +236,7 @@
                                        Padding="0,0,0,0"
                                        Margin="0,0,0,0">
                                     <Ellipse 
-                                        x:Name="SignInIconImageContainer"
+                                        Name="SignInIconImageContainer"
                                         Visibility="Collapsed"
                                         Height="32"
                                         Width="32"
@@ -250,7 +250,7 @@
                                         </Ellipse.Fill>
                                     </Ellipse>
                                     <TextBlock 
-                                        x:Name="SignInIconIcon"
+                                        Name="SignInIconIcon"
                                         Padding="0,0,0,0"
                                         Margin="-4,0,0,0"
                                         Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}"
@@ -259,7 +259,7 @@
                                 </Grid>
 
                                 <TextBlock 
-                                    x:Name="SignInText"
+                                    Name="SignInText"
                                     RelativePanel.RightOf="SignInButtonIcon"
                                                Style="{StaticResource NavigationButton_RelativePanel_TextBlock}" Margin="4,0,0,0">
                                                Sign in
@@ -268,7 +268,7 @@
                             </Button>
                          <Button Style="{StaticResource NavigationButton}" Click="SettingsButton_Click">
                                 <RelativePanel Style="{StaticResource NavigationButton_RelativePanel}">
-                                    <Border x:Name="SettingsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
+                                    <Border Name="SettingsButtonIcon" Style="{StaticResource NavigationButton_RelativePanel_Border}">
                                         <TextBlock Style="{StaticResource NavigationButton_RelativePanel_Border_TextBlock}">&#xE115;</TextBlock>
                                     </Border>
                                     <TextBlock RelativePanel.RightOf="SettingsButtonIcon"
@@ -288,7 +288,7 @@
             </SplitView.Pane>
 
             <SplitView.Content>
-                   <Frame x:Name="MainFrame"/>
+                   <Frame Name="MainFrame"/>
             </SplitView.Content>
             
         </SplitView>

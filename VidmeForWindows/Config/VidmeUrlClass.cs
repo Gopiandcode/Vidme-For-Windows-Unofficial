@@ -29,9 +29,25 @@ namespace VidmeForWindows.Config
 
         public static string FollowingUserURL(string id) => "https://api.vid.me/user/" + id + "/following";
 
+        public static string FollowersUserURL(string id) => "https://api.vid.me/user/" + id + "/followers";
+
         public static string FeaturedUserURL = "https://api.vid.me/users/featured";
 
         public static string SearchUserURL(string text) => "https://api.vid.me/users/suggest?text=" + text;
+
+        public static string TagListURL = "https://api.vid.me/tags/list";
+
+        public static string TagSearchURL(string text) => "https://api.vid.me/tags/suggest?text=" + text;
+
+        public static string TagVideoURL(string id) => "https://api.vid.me/tag/"+ id + "/hot";
+
+        public static string UserVideoURL(string id) => "https://api.vid.me/user/" + id + "/videos";
+
+        public static string CheckSubscribedURL(string id) => "https://api.vid.me/user/" + id + "/subscribed";
+
+        public static string LikedVideosUserURL(string id) => "https://api.vid.me/videos/likes?user=" + id;
+
+        public static string UserAblumsURL(string id) => "https://api.vid.me/user/" + id + "/albums";
 
     }
 }

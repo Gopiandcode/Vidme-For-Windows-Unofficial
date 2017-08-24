@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="120"/>
         </Grid.ColumnDefinitions>
 
         <RelativePanel 
@@ -32,7 +32,7 @@
             <TextBox
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.AlignHorizontalCenterWithPanel="True"
-                x:Name="SearchTextBox"
+                Name="SearchTextBox"
                 MaxWidth="500"
                 MinWidth="300"
                 HorizontalAlignment="Stretch"
@@ -45,7 +45,7 @@
             <Button 
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.RightOf="SearchTextBox"
-                x:Name="ClearButton"
+                Name="ClearButton"
                 Foreground="{StaticResource ApplicationTheme_Highlight}"
                 Click="ClearTextHandler"
                 Style="{StaticResource AccentButtonStyle}">
@@ -53,10 +53,10 @@
             </Button>
         </RelativePanel>
 
-        <Button x:Name="UserSourceFlyout"
+        <Button Name="UserSourceFlyout"
                 Grid.Row="0"
                 Grid.Column="1"
-                Padding="2,2,2,2"
+                Padding="5,5,5,5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Background="{StaticResource ApplicationTheme_DarkForeground}"
@@ -66,7 +66,7 @@
                     <TextBlock 
                         Padding="0,0,2,0"
                         Foreground="{StaticResource ApplicationTheme_RedHighlights}" 
-                        x:Name="UserSourceFlyoutText"/>
+                        Name="UserSourceFlyoutText"/>
                     <TextBlock 
                         RelativePanel.RightOf="UserSourceFlyoutText" 
                         RelativePanel.AlignVerticalCenterWith="UserSourceFlyoutText"
@@ -88,12 +88,12 @@
                         Orientation="Vertical">
                         <RadioButton
                             Foreground="{StaticResource ApplicationTheme_RedHighlights}"
-                            x:Name="UsersFromFollowing" GroupName="UsersFrom" Checked="VideoSource_Changed"
+                            Name="UsersFromFollowing" GroupName="UsersFrom" Checked="VideoSource_Changed"
                             Style="{StaticResource RadioButtonStyle}">
                             Following</RadioButton>
                         <RadioButton 
                             Foreground="{StaticResource ApplicationTheme_RedHighlights}"
-                            x:Name="UsersFromFeatured" GroupName="UsersFrom" Checked="VideoSource_Changed"
+                            Name="UsersFromFeatured" GroupName="UsersFrom" Checked="VideoSource_Changed"
                             Style="{StaticResource RadioButtonStyle}">
                             Featured</RadioButton>
                     </StackPanel>
@@ -108,7 +108,8 @@
             ScrollViewer.IsVerticalRailEnabled="True"
             SizeChanged="OnGridViewSizeChanged"
             ItemClick="UserClicked_Handler"
-            x:Name="MainView">
+            IsItemClickEnabled="True"
+            Name="MainView">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="user:User">
                     <control:UserControls

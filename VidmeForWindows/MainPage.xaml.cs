@@ -44,6 +44,7 @@ namespace VidmeForWindows
         FEEDS,
         WATCHLATER,
         TAGS,
+        TAGSVIDEOS,
         HOTTODAY,
         FRESHUPLOADS,
         CREATOR,
@@ -76,6 +77,8 @@ namespace VidmeForWindows
 
         public Button PublicSelectMultipleButton => SelectMultipleButton;
 
+        public Frame PublicMainFrame => MainFrame;
+
         private PasswordCredential getCredentialsFromLocker()
         {
 
@@ -102,6 +105,21 @@ namespace VidmeForWindows
             return credential;
         }
 
+        public void Navigate(Type type, object o)
+        {
+            MainFrame.Navigate(type, o);
+            while(MainFrame.BackStackDepth > 1)
+                MainFrame.BackStack.Remove(MainFrame.BackStack.Last());
+            if (MainFrame.BackStackDepth > 0)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
+
+        }
 
         void configureHttpClient()
         {
@@ -211,6 +229,8 @@ namespace VidmeForWindows
 
                         loggedIn = false;
 
+                        id = null;
+
                         setState(current_state, true);
                     });
 
@@ -258,7 +278,16 @@ namespace VidmeForWindows
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 MainFrame.Navigate(typeof(HomeFrame), videos);
-                
+
+                if (MainFrame.BackStackDepth > 0 && current_state != CurrentPageState.HOTTODAY && current_state != CurrentPageState.FRESHUPLOADS && current_state != CurrentPageState.FEATURED && current_state != CurrentPageState.HOME && current_state != CurrentPageState.FEEDS)
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                }
+                else
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                }
+
             });
         }
 
@@ -482,9 +511,20 @@ namespace VidmeForWindows
                     case CurrentPageState.CHANNELVIDEOS:
                         setState(CurrentPageState.CHANNELS);
                         break;
+                    case CurrentPageState.TAGSVIDEOS:
+                        setState(CurrentPageState.TAGS);
+                        break;
+                    default:
+                        if (MainFrame.BackStackDepth > 0)
+                        {
+                            MainFrame.GoBack();
+                        }
+                        break;
                 }
 
-                if (MainFrame.BackStackDepth > 0)
+                
+
+                if (MainFrame.BackStackDepth > 0 && current_state != CurrentPageState.HOTTODAY && current_state!= CurrentPageState.FRESHUPLOADS && current_state != CurrentPageState.FEATURED && current_state != CurrentPageState.HOME && current_state != CurrentPageState.FEEDS)
                 {
                     SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 }
@@ -506,12 +546,11 @@ namespace VidmeForWindows
 
             switch (state)
             {
-                case CurrentPageState.CREATOR:
-                    MainPageTitle.Text = "Creator";
-                    clearStack();
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    break;
                 case CurrentPageState.CHANNELVIDEOS:
+                    SelectMultipleButton.Visibility = Visibility.Visible;
+                    RefreshButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.TAGSVIDEOS:
                     SelectMultipleButton.Visibility = Visibility.Visible;
                     RefreshButton.Visibility = Visibility.Collapsed;
                     break;
@@ -541,14 +580,15 @@ namespace VidmeForWindows
                         generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
                     SelectMultipleButton.Visibility = Visibility.Visible;
                     break;
-                case CurrentPageState.FOLLOWING:
-                    MainPageTitle.Text = "Following";
-                    clearStack();
+                case CurrentPageState.CREATOR:
+                    MainPageTitle.Text = "Creators";
                     MainFrame.Navigate(typeof(UsersFrame), new UserFrameParams() {
                         id = id,
                         httpClient = httpclient,
                         http_client_semaphore = http_client_semaphore
                     });
+                    clearStack();
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
                     break;
                 case CurrentPageState.FRESHUPLOADS:
@@ -559,12 +599,13 @@ namespace VidmeForWindows
                     break;
                 case CurrentPageState.HOME:
                     MainPageTitle.Text = "Home";
-                    clearStack();
+                    
                     if (loggedIn)
                         generateVideoFrame(VidmeUrlClass.FeedVideoURL);
                     else
                         generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
                     SelectMultipleButton.Visibility = Visibility.Visible;
+                    clearStack();
                     break;
                 case CurrentPageState.HOTTODAY:
                     MainPageTitle.Text = "Hot Today";
@@ -587,6 +628,11 @@ namespace VidmeForWindows
                     break;
                 case CurrentPageState.TAGS:
                     MainPageTitle.Text = "Tags";
+                    clearStack();
+                    MainFrame.Navigate(typeof(TagFrame), new TagFrameParams() {
+                        httpClient = httpclient,
+                        http_client_semaphore = http_client_semaphore
+                    });
                     clearStack();
                     SelectMultipleButton.Visibility = Visibility.Collapsed;
                     break;
@@ -622,6 +668,13 @@ namespace VidmeForWindows
             generateVideoFrame(channel_url);
 
         }
+
+        public void displayTagVideos(string url, string title)
+        {
+            setState(CurrentPageState.TAGSVIDEOS);
+            MainPageTitle.Text = title;
+            generateVideoFrame(url);
+        }
         
         private void HomeButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.HOME);
@@ -647,8 +700,8 @@ namespace VidmeForWindows
         private void ChannelsButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.CHANNELS);
         }
-        private void FollowingButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.FOLLOWING);
+        private void CreatorButton_Click(object sender, RoutedEventArgs e) {
+            setState(CurrentPageState.CREATOR);
         }
         private void FeaturedButton_Click(object sender, RoutedEventArgs e) {
             setState(CurrentPageState.FEATURED);

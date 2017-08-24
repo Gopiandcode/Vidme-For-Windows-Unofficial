@@ -28,8 +28,15 @@ namespace VidmeForWindows.Pages
         Button SelectMultipleButton;
         public string video_url;
 
-        ~HomeFrame()
+        /*~HomeFrame()
         {
+            SelectMultipleButton.Click -= MainPage_SelectMultipleButton;
+            
+        }*/
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
             SelectMultipleButton.Click -= MainPage_SelectMultipleButton;
 
         }

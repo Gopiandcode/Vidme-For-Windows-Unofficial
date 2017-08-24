@@ -100,6 +100,9 @@
     <Compile Include="Controls\ChannelControl.xaml.cs">
       <DependentUpon>ChannelControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SingleCommentControl.xaml.cs">
+      <DependentUpon>SingleCommentControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserControls.xaml.cs">
       <DependentUpon>UserControls.xaml</DependentUpon>
     </Compile>
@@ -112,7 +115,10 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\VidmeAlbum.cs" />
     <Compile Include="Models\VidmeChannels.cs" />
+    <Compile Include="Models\VidmeComments.cs" />
+    <Compile Include="Models\VidmeLabel.cs" />
     <Compile Include="Models\VidmeUser.cs" />
     <Compile Include="Models\VidmeVideos.cs" />
     <Compile Include="Models\VidmeAuthenticationCheck.cs" />
@@ -120,8 +126,14 @@
     <Compile Include="Pages\ChannelFrame.xaml.cs">
       <DependentUpon>ChannelFrame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\CreatorFrame.xaml.cs">
+      <DependentUpon>CreatorFrame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HomeFrame.xaml.cs">
       <DependentUpon>HomeFrame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TagFrame.xaml.cs">
+      <DependentUpon>TagFrame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\UsersFrame.xaml.cs">
       <DependentUpon>UsersFrame.xaml</DependentUpon>
@@ -130,6 +142,7 @@
     <Compile Include="Utility\DoubleToTimeStringConverter.cs" />
     <Compile Include="Utility\ElementWidthConverter.cs" />
     <Compile Include="Utility\IncrementalDataLoader.cs" />
+    <Compile Include="Utility\IncrementalLoadingTagList.cs" />
     <Compile Include="Utility\IncrementalLoadingUserList.cs" />
     <Compile Include="Utility\IncrementalLoadingVideoList.cs" />
     <Compile Include="Utility\StringAppenderConverter.cs" />
@@ -161,6 +174,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\SingleCommentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\UserControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -181,7 +198,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\CreatorFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\HomeFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TagFrame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -190,6 +215,16 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\ApplicationStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Styles\CommentStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Styles\CreatorFrameStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,0 +1,506 @@
+﻿<Page
+    x:Class="VidmeForWindows.Pages.CreatorFrame"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VidmeForWindows.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:controls="using:VidmeForWindows.Controls"
+    xmlns:videos="using:VidmeForWindows.Models.Videos"
+    xmlns:utility="using:VidmeForWindows.Utility"
+    xmlns:albums="using:VidmeForWindows.Models.Album"
+    xmlns:user="using:VidmeForWindows.Models.User"
+    Background="{StaticResource ApplicationTheme_DarkAccent}">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Styles/CreatorFrameStyle.xaml"/>
+                <ResourceDictionary>
+                    <utility:UrlToImageSourceConverter x:Key="UrlConverter" />
+                    <utility:StringAppenderConverter x:Key="StringAppender" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Pivot 
+        ManipulationMode="RotateInertia"
+        Foreground="{StaticResource ApplicationTheme_RedForeground}"
+        Background="{StaticResource ApplicationTheme_DarkAccent}" Style="{StaticResource UserPivotStyle}" 
+        >
+
+        <PivotItem
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch" Margin="0"
+            >
+            <PivotItem.Header>
+                <TextBlock Text="Home" FontSize="20"/>
+            </PivotItem.Header>
+            <StackPanel>
+                <RelativePanel
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch">
+                    <Image 
+                        Name="CoverImage"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Stretch="Fill"
+                        Height="300"  
+                        Source="ms-appx:///Assets/vidme-logo-big.png"/>
+                    <StackPanel
+                        Orientation="Vertical"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.Above="UserInfo"
+                        >
+                        <Ellipse
+                            
+                            Height="110"
+                            Width="110"
+                            Margin="20,0,0,20"
+                            >
+                            <Ellipse.Fill>
+                                <ImageBrush x:Name="UserIdImage" ImageSource="ms-appx:///Assets/vidme-logo-big.png"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </StackPanel>
+                    
+                    <ScrollViewer
+                        Name="UserInfo"
+                        RelativePanel.Below="CoverImage"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        HorizontalScrollBarVisibility="Hidden"
+                        >
+                    <StackPanel 
+                    Orientation="Horizontal" 
+                    Background="{StaticResource ApplicationTheme_DarkMidground}"
+                    >
+                        <TextBlock 
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Padding="15,5,15,5"
+                            Text="Vidme User"/>
+
+                        <TextBlock 
+                            VerticalAlignment="Center"
+                            Padding="15,5,15,5"
+                            FontSize="10"
+                            Text="1000,000 Follow"/>
+                            <Button
+                                Content="Follow"/>
+                    </StackPanel>
+                    </ScrollViewer>
+                    <GridView 
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.Below="UserInfo"
+                        
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                        ScrollViewer.IsVerticalRailEnabled="True"
+                        ScrollViewer.IsScrollInertiaEnabled="True"
+                        SizeChanged="OnUserGridViewSizeChanged"
+                        HorizontalContentAlignment="Stretch"
+                        SelectionMode="Single"
+                        IsItemClickEnabled="True"
+                        ItemClick="VideoClicked_Handler"
+                        SelectionChanged="MainView_SelectionChanged"
+                        Name="GridViewUserVideos"
+                        
+                        >
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="videos:Video">
+                                <controls:VideoControl 
+                                        VideoTitle="{x:Bind title}"
+                                        VideoLength="{x:Bind duration}"
+                                        VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
+                                        VideoViewCount ="{Binding view_count, Converter={StaticResource StringAppender}, ConverterParameter= views}"
+                                        VideoPoster="{Binding user.avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                                        VideoPosterName="{Binding user.username}"
+                                    />
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Margin" Value="2,2,2,5"/>
+                                <Setter Property="Padding" Value="2"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GridViewItem">
+                                            <ListViewItemPresenter 
+
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                            </ListViewItemPresenter>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GridView.ItemContainerStyle>
+
+                    </GridView>
+                </RelativePanel>
+            </StackPanel>
+            
+            
+        </PivotItem>
+
+        <PivotItem
+            Foreground="{StaticResource ApplicationTheme_Highlight}" Margin="0"
+            >
+            <PivotItem.Header>
+                <TextBlock Text="Upvoted" FontSize="20"/>
+            </PivotItem.Header>
+
+            <GridView
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.Below="UserInfo"
+                        
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                        ScrollViewer.IsVerticalRailEnabled="True"
+                        ScrollViewer.IsScrollInertiaEnabled="True"
+                        SizeChanged="OnUpvotedGridViewSizeChanged"
+                        HorizontalContentAlignment="Stretch"
+                        SelectionMode="Single"
+                        IsItemClickEnabled="True"
+                        ItemClick="VideoClicked_Handler"
+                        SelectionChanged="MainView_SelectionChanged"
+                        Name="GridViewUpvotedVideos"
+                        
+                        >
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="videos:Video">
+                        <controls:VideoControl 
+                                        VideoTitle="{x:Bind title}"
+                                        VideoLength="{x:Bind duration}"
+                                        VideoThumbnail="{Binding thumbnail_url, Converter={StaticResource UrlConverter}}"
+                                        VideoViewCount ="{Binding view_count, Converter={StaticResource StringAppender}, ConverterParameter= views}"
+                                        VideoPoster="{Binding user.avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                                        VideoPosterName="{Binding user.username}"
+                                    />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="2,2,2,5"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <ListViewItemPresenter 
+
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+
+            </GridView>
+
+        </PivotItem>
+
+        <PivotItem
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            >
+            <PivotItem.Header>
+                <TextBlock Text="Albums" FontSize="20"/>
+            </PivotItem.Header>
+
+            <GridView
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            ScrollViewer.IsVerticalRailEnabled="True"
+            ScrollViewer.IsScrollInertiaEnabled="True"
+            SizeChanged="OnGridViewChannelSizeChanged"
+            HorizontalContentAlignment="Stretch"
+            SelectionMode="Single"
+            ItemClick="ChannelItemClick_Handler"
+            IsItemClickEnabled="True"
+            SelectionChanged="{x:Bind MainView_SelectionChanged}"
+            Name="AlbumView">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="albums:Album">
+                        <controls:ChannelControl 
+                        ChannelPosterImage="{Binding user_image_url, Converter={StaticResource UrlConverter}}"
+                        ChannelThumbnailImage="{Binding album_image_url, Converter={StaticResource UrlConverter}}"
+                        ChannelTitleString="{Binding title}"
+                        ChannelVideoCountString="{Binding video_count}"
+                        />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="2,2,2,5"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <ListViewItemPresenter 
+
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+
+            </GridView>
+
+
+        </PivotItem>
+
+        <PivotItem
+            Foreground="{StaticResource ApplicationTheme_Highlight}">
+            <PivotItem.Header>
+                <TextBlock Text="Following" FontSize="20"/>
+            </PivotItem.Header>
+
+
+
+
+            <GridView
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            ScrollViewer.IsVerticalRailEnabled="True"
+            SizeChanged="OnFollowingViewSizeChanged"
+            ItemClick="UserClicked_Handler"
+            IsItemClickEnabled="True"
+            Name="FollowingView">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="user:User">
+                        <controls:UserControls
+                        UserAvatarImage="{x:Bind avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                        Username="{x:Bind username}"
+                        VideoCount="{x:Bind video_count, Converter={StaticResource StringAppender}, ConverterParameter=videos}"
+                        FollowerCount="{x:Bind follower_count, Converter={StaticResource StringAppender}, ConverterParameter=followers}"
+                        />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="5,5,5,7"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <ListViewItemPresenter 
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+
+
+            </GridView>
+
+
+
+
+
+        </PivotItem>
+
+
+
+        <PivotItem
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            >
+            <PivotItem.Header>
+                <TextBlock Text="Comments" FontSize="20"/>
+            </PivotItem.Header>
+
+        </PivotItem>
+        
+        
+        
+        
+        <PivotItem
+            Foreground="{StaticResource ApplicationTheme_Highlight}"
+            >
+
+            <PivotItem.Header>
+                <TextBlock Text="Followers" FontSize="20"/>
+            </PivotItem.Header>
+
+
+            <GridView
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            ScrollViewer.IsVerticalRailEnabled="True"
+            SizeChanged="OnFollowerViewSizeChanged"
+            ItemClick="UserClicked_Handler"
+                IsItemClickEnabled="True"
+            Name="FollowersView">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="user:User">
+                        <controls:UserControls
+                        UserAvatarImage="{x:Bind avatar_url, Converter={StaticResource UrlConverter}, ConverterParameter=videoposterfilter}"
+                        Username="{x:Bind username}"
+                        VideoCount="{x:Bind video_count, Converter={StaticResource StringAppender}, ConverterParameter=videos}"
+                        FollowerCount="{x:Bind follower_count, Converter={StaticResource StringAppender}, ConverterParameter=followers}"
+                        />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="5,5,5,7"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <ListViewItemPresenter 
+                                    SelectionCheckMarkVisualEnabled="False"
+                                    CheckBrush="White"
+                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    PointerOverBackground="{StaticResource ApplicationTheme_DarkMidground}"
+                                    
+                                    SelectedBackground="{StaticResource ApplicationTheme_RedHighlights}"
+                                    SelectedPointerOverBackground="{StaticResource ApplicationTheme_RedForeground}"
+                                    
+                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                    
+                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                    
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"                                   
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentMargin="{TemplateBinding Padding}"
+                                    CheckMode="Overlay"
+                                    >
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+
+
+            </GridView>            
+            
+
+        </PivotItem>
+        
+    </Pivot>
+
+
+
+</Page>

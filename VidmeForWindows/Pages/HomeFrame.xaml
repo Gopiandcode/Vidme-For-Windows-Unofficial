@@ -25,7 +25,7 @@
             IsItemClickEnabled="True"
             ItemClick="VideoClicked_Handler"
             SelectionChanged="{x:Bind MainView_SelectionChanged}"
-            x:Name="MainView">
+            Name="MainView">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="video:Video">
                     <controls:VideoControl 

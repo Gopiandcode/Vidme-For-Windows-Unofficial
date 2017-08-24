@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Name="userControl"
+    Name="userControl"
     x:Class="VidmeForWindows.Controls.ChannelControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,7 +19,7 @@
     <RelativePanel
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
-            x:Name="LayoutRoot" >
+            Name="LayoutRoot" >
 
 
 
@@ -83,7 +83,7 @@
             <!-- Width="{Binding ActualWidth, ElementName=userControl, Converter={StaticResource WidthConverter}, ConverterParameter=*0.945}" -->
             <!-- Height="{Binding ActualWidth, ElementName=userControl, Converter={StaticResource WidthConverter}, ConverterParameter=*0.42}"-->
             <Border
-            x:Name="ChannelImage"
+            Name="ChannelImage"
             RelativePanel.AlignHorizontalCenterWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
@@ -103,7 +103,7 @@
             Source="{Binding ChannelThumbnailImage, ElementName=userControl}" />
             </Border>
             <Ellipse
-            x:Name="PosterImagePanel"
+            Name="PosterImagePanel"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             Width="50"
@@ -121,7 +121,7 @@
                     RelativePanel.Below="ChannelImage"
                     RelativePanel.RightOf="PosterImagePanel">
                 <TextBlock
-            x:Name="ChannelTitlePanel"
+            Name="ChannelTitlePanel"
             MaxLines="1"
             Width="Auto"
             TextWrapping="Wrap"
@@ -130,7 +130,7 @@
             >Title</TextBlock>
 
                 <TextBlock
-            x:Name="ChannelCount"
+            Name="ChannelCount"
             Foreground="{StaticResource ApplicationTheme_Highlight}"
             FontSize="12" Text="{Binding ChannelVideoCountString, ElementName=userControl, Converter={StaticResource StringAppender}, ConverterParameter=Videos}">100 Videos</TextBlock>
             </StackPanel>

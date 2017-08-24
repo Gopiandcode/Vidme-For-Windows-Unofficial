@@ -10,7 +10,7 @@
     xmlns:channel="using:VidmeForWindows.Models.Channels"
     mc:Ignorable="d">
     <Page.Resources>
-        <utility:UrlToImageSourceConverter x:Key="UrlConverter" x:Name="UrlConverter"/>
+        <utility:UrlToImageSourceConverter x:Key="UrlConverter"/>
     </Page.Resources>
 
         <Grid  Background="{StaticResource ApplicationTheme_DarkAccent}" >
@@ -26,7 +26,7 @@
             ItemClick="ChannelItemClick_Handler"
             IsItemClickEnabled="True"
             SelectionChanged="{x:Bind MainView_SelectionChanged}"
-            x:Name="MainView">
+            Name="MainView">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="channel:Channel">
                         <controls:ChannelControl

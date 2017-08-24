@@ -111,7 +111,17 @@ namespace VidmeForWindows.Pages
 
         private void UserClicked_Handler(object sender, ItemClickEventArgs e)
         {
+            Models.User.User user = e.ClickedItem as Models.User.User;
 
+            CreatorFrameParams item = new CreatorFrameParams() {
+                id = id,
+                httpClient = httpClient,
+                http_client_semaphore = http_client_semaphore,
+                user = user
+            };
+
+            ((Window.Current.Content as Frame).Content as MainPage).Navigate(typeof(CreatorFrame), item);
+                
         }
 
         
