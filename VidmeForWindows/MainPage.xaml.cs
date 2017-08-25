@@ -144,9 +144,9 @@ namespace VidmeForWindows
             httpclient = new HttpClient();
             http_client_semaphore.Release();
 
-            //var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", VidmeAuthentificationClass.Application_Key, VidmeAuthentificationClass.Application_Secret)));
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", VidmeAuthentificationClass.Application_Key, VidmeAuthentificationClass.Application_Secret)));
             
-            //httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
         }
         
         // Will attempt to login to the application, and change the respective values

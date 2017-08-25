@@ -117,6 +117,8 @@
                             Text="1000,000 Follow"
                                     Name="VidmeViewCount"/>
                                 <Button
+                                    Name="FollowButton"
+                                    Click="FollowButtonClick"
                                 Content="Follow"/>
                             </StackPanel>
                         </ScrollViewer>

@@ -8,7 +8,7 @@ namespace VidmeForWindows.Config
 {
     class VidmeUrlClass
     {
-        public static string AuthenticationURL = "https://vid.me/oauth/authorize?client_id=" + VidmeAuthentificationClass.Application_ClientID + "&redirect_uri=http%3A%2F%2Fgopiandcode.com%2FVidmeForWindows&scopes=votes%20comments%20channels%20basic&response_type=code";
+        public static string AuthenticationURL = "https://vid.me/oauth/authorize?client_id=" + VidmeAuthentificationClass.Application_ClientID + "&redirect_uri=http%3A%2F%2Fgopiandcode.com%2FVidmeForWindows&scopes=account%20votes%20comments%20channels%20basic&response_type=code";
         public static string AuthenticationRedirectURL = "http://gopiandcode.com/VidmeForWindows";
 
         public static string AuthenticationTokenURL = "https://api.vid.me/oauth/token";
@@ -52,6 +52,11 @@ namespace VidmeForWindows.Config
         public static string UserCommentsURL(string id) => "https://api.vid.me/user/" + id + "/comments";
 
         public static string AlbumVideosURL(string id) => "https://api.vid.me/album/" + id + "/videos";
+
+
+        public static string UserUnfollowURL(string id) => "https://api.vid.me/user/" + id + "/unfollow";
+
+        public static string UserFollowURL(string id) => "https://api.vid.me/user/" + id + "/follow";
 
     }
 }

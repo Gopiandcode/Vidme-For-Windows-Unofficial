@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using VidmeForWindows.Utility;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -41,7 +43,7 @@ namespace VidmeForWindows.Pages
         private SemaphoreSlim http_client_semaphore;
         Button SelectMultipleButton;
         string id;
-
+        Boolean isfollowing;
 
         public CreatorFrame()
         {
@@ -132,6 +134,15 @@ namespace VidmeForWindows.Pages
             http_client_semaphore = input.http_client_semaphore;
             user = input.user;
             id = input.id;
+
+            if(id == null)
+            {
+                FollowButton.IsEnabled = false;
+            } else
+            {
+                if (user.is_following) FollowButton.Content = "Unfollow";
+                isfollowing = user.is_following;
+            }
 
             CoverImage.Source = new BitmapImage(new Uri(user.cover_url));
             
@@ -470,6 +481,85 @@ namespace VidmeForWindows.Pages
         private void CommentClicked_Handler(object sender, ItemClickEventArgs e)
         {
 
+        }
+        Task followbuttontask;
+
+        private async Task FollowChange() {
+            if (isfollowing)
+            {
+                HttpRequestMessage message = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(Config.VidmeUrlClass.UserUnfollowURL(user.user_id)),
+                    Method = HttpMethod.Post
+                };
+
+                await http_client_semaphore.WaitAsync();
+                HttpResponseMessage response = await httpClient.SendAsync(message);
+                http_client_semaphore.Release();
+
+                string response_string = await response.Content.ReadAsStringAsync();
+
+                var status = new { status = true };
+
+                var data = JsonConvert.DeserializeAnonymousType(response_string, status);
+
+
+                if (data.status)
+                {
+                    isfollowing = false;
+                    await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        FollowButton.Content = "Follow";
+                    });
+                }
+
+
+            }
+            else
+            {
+
+                HttpRequestMessage message = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(Config.VidmeUrlClass.UserFollowURL(user.user_id)),
+                    Method = HttpMethod.Post
+                };
+
+                await http_client_semaphore.WaitAsync();
+                HttpResponseMessage response = await httpClient.SendAsync(message);
+                http_client_semaphore.Release();
+
+                string response_string = await response.Content.ReadAsStringAsync();
+
+                var status = new { status = true };
+
+                var data = JsonConvert.DeserializeAnonymousType(response_string, status);
+
+
+                if (data.status)
+                {
+                    isfollowing = true;
+
+                    await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        FollowButton.Content = "UnFollow";
+                    });
+
+
+                }
+            }
+
+            }
+
+        private void FollowButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (id != null)
+            {
+                if (followbuttontask != null)
+                    followbuttontask = followbuttontask.ContinueWith((t) => { return FollowChange(); });
+                else
+                    followbuttontask = FollowChange();
+
+            }
         }
     }
 }
