@@ -135,6 +135,14 @@ namespace VidmeForWindows.Pages
         private void VideoClicked_Handler(object sender, ItemClickEventArgs e)
         {
             Debug.WriteLine("Video Clicked!");
+            MainPage page = ((Window.Current.Content as Frame).Content as MainPage);
+            page.PublicMainFrame.Navigate(typeof(VideoFrame), new VideoFrameParams()
+            {
+                httpclient = page.httpclient,
+                http_client_semaphore = page.http_client_semaphore,
+                videos = new List<Models.Videos.Video>() { e.ClickedItem as Models.Videos.Video }
+            });
+            page.setState(CurrentPageState.VIDEOS);
         }
     }
 }

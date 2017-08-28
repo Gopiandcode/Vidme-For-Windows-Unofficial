@@ -13,7 +13,6 @@
         <utility:UrlToImageSourceConverter x:Key="UrlConverter" />
         <utility:StringAppenderConverter x:Key="StringAppender" />
     </Page.Resources>
-    <ScrollViewer>
     <Grid 
         Name="MainGrid"
         Background="{ThemeResource ApplicationTheme_DarkAccent}">
@@ -35,9 +34,9 @@
                         <Setter Target="PivotView.Grid.Row" Value="2"/>
 
                         <Setter Target="DescriptionPanel.Grid.Row" Value="1"/>
-                        
 
-                        </VisualState.Setters>
+
+                    </VisualState.Setters>
                 </VisualState>
 
 
@@ -60,7 +59,7 @@
 
 
 
-                        </VisualState.Setters>
+                    </VisualState.Setters>
                 </VisualState>
 
 
@@ -81,12 +80,12 @@
 
                 </VisualState>
 
-            </VisualStateGroup>    
-            
+            </VisualStateGroup>
+
         </VisualStateManager.VisualStateGroups>
-        
-        
-        
+
+
+
         <Grid.RowDefinitions>
             <RowDefinition x:Name="MainGridRow0" Height="2*"/>
             <RowDefinition x:Name="MainGridRow1"  Height="1*"/>
@@ -96,8 +95,82 @@
             <ColumnDefinition x:Name="MainGridCol0" Width="2*"/>
             <ColumnDefinition x:Name="MainGridCol1" Width="1*"/>
         </Grid.ColumnDefinitions>
-        <MediaPlayerPresenter Name="MediaPlayer" Grid.Row="0" Grid.Column="0"/>
+        <MediaPlayerElement
+            Name="MediaPlayer" 
+            Grid.Row="0" 
+            Grid.Column="0"
+            AreTransportControlsEnabled="True"
+            RequestedTheme="Dark"
+            />
         <Pivot Name="PivotView" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+            <PivotItem Pivot.SlideInAnimationGroup="GroupTwo" Visibility="Collapsed" IsEnabled="False">
+                <PivotItem.Header>
+                    <TextBlock Text="Description" Foreground="{StaticResource ApplicationTheme_Highlight}"/>
+                </PivotItem.Header>
+
+                <ScrollViewer
+            Name="DescriptionPivotPanel"
+            VerticalScrollBarVisibility="Hidden"
+            Grid.Row="1" Grid.Column="0"
+            >
+                    <StackPanel 
+            Name="VideoDetailsPivotPanel"
+            >
+
+                        <TextBlock Margin="10" Padding="10" Name="VideoPivotTitle" Text="Vidme | Folks to Follow" FontSize="30"/>
+                        <Rectangle HorizontalAlignment="Stretch" Height="4" Fill="{StaticResource ApplicationTheme_RedForeground}"/>
+
+                        <RelativePanel>
+                            <Ellipse 
+                    Name="AvatarImagePivotPanel"
+                    Width="60" Height="60" Margin="10,10,10,10">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="ms-appx:///Assets/vidme-logo-big.png" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+
+                            <TextBlock Name="UserNamePivotPanel" RelativePanel.RightOf="AvatarImagePivotPanel" RelativePanel.AlignVerticalCenterWith="AvatarImagePanel" Text="Vidme" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,0"/>
+                            <Button  Name="UserFollowPivotPanel" RelativePanel.RightOf="UserNamePivotPanel" RelativePanel.AlignVerticalCenterWith="UserNamePanel"  Content="Follow" Background="{StaticResource ApplicationTheme_DarkForeground}" Margin="10,0,10,0" Foreground="{StaticResource ApplicationTheme_Highlight}"/>
+
+                            <Button 
+                    Foreground="{StaticResource ApplicationTheme_Highlight}"
+                    Background="{StaticResource ApplicationTheme_DarkForeground}"
+                    Content="123 Upvotes"
+                    Name="UpvotePivotButton"
+                    RelativePanel.AlignRightWithPanel="True" Margin="10,10,10,10" RelativePanel.AlignVerticalCenterWithPanel="True"/>
+
+                            <Button 
+                    Foreground="{StaticResource ApplicationTheme_Highlight}"
+                    Background="{StaticResource ApplicationTheme_DarkForeground}"
+                    Name="PivotShare"
+                    RelativePanel.LeftOf="UpvotePivotButton" Margin="10,10,10,10" RelativePanel.AlignVerticalCenterWithPanel="True">
+                                <SymbolIcon Symbol="ReShare"/>
+                            </Button>
+
+                            <Button
+                    Foreground="{StaticResource ApplicationTheme_Highlight}"
+                    Background="{StaticResource ApplicationTheme_DarkForeground}"
+                    RelativePanel.LeftOf="Share"
+                    RelativePanel.AlignVerticalCenterWithPanel="True">
+                                <SymbolIcon Symbol="Add"/>
+                            </Button>
+
+
+                        </RelativePanel>
+
+                        <TextBlock TextWrapping="Wrap" Padding="10,10,10,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                Kiran is a genius and you know that he knows that he is the best and if you don't believe what you mean, then I don't know
+                what I'm talking about, but I'd say I know what I'm talking about. Thus if you're a genius then you can't eat food like me. 
+                I am a genius. But you couldn't say that I am insane.
+                        </TextBlock>
+
+
+                    </StackPanel>
+                </ScrollViewer>
+
+
+            </PivotItem>
+            
             <PivotItem>
                 <PivotItem.Header>
                     <TextBlock Text="Suggestions" Foreground="{StaticResource ApplicationTheme_Highlight}"/>
@@ -300,13 +373,16 @@
         </Pivot>
         <ScrollViewer
             Name="DescriptionPanel"
+            VerticalScrollBarVisibility="Hidden"
             Grid.Row="1" Grid.Column="0"
             >
             <StackPanel 
             Name="VideoDetailsPanel"
             >
 
-                <TextBlock Margin="10" Padding="10" Name="VideoTitle" Text="Vidme | Folks to Follow" FontSize="30"/>
+                <TextBlock
+                    Foreground="{StaticResource ApplicationTheme_Highlight}"
+                    Margin="10" Padding="10" Name="VideoTitle" Text="Vidme | Folks to Follow" FontSize="30"/>
                 <Rectangle HorizontalAlignment="Stretch" Height="4" Fill="{StaticResource ApplicationTheme_RedForeground}"/>
 
                 <RelativePanel>
@@ -318,7 +394,10 @@
                         </Ellipse.Fill>
                     </Ellipse>
 
-                    <TextBlock Name="UserNamePanel" RelativePanel.RightOf="AvatarImagePanel" RelativePanel.AlignVerticalCenterWith="AvatarImagePanel" Text="Vidme" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,0"/>
+                    <TextBlock 
+                        
+                    Foreground="{StaticResource ApplicationTheme_Highlight}"
+                        Name="UserNamePanel" RelativePanel.RightOf="AvatarImagePanel" RelativePanel.AlignVerticalCenterWith="AvatarImagePanel" Text="Vidme" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,0"/>
                     <Button  Name="UserFollowPanel" RelativePanel.RightOf="UserNamePanel" RelativePanel.AlignVerticalCenterWith="UserNamePanel"  Content="Follow" Background="{StaticResource ApplicationTheme_DarkForeground}" Margin="10,0,10,0" Foreground="{StaticResource ApplicationTheme_Highlight}"/>
 
                     <Button 
@@ -347,7 +426,10 @@
 
                 </RelativePanel>
 
-                <TextBlock TextWrapping="Wrap" Padding="10,10,10,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBlock
+
+                    Foreground="{StaticResource ApplicationTheme_Highlight}"
+                    TextWrapping="Wrap" Padding="10,10,10,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 Kiran is a genius and you know that he knows that he is the best and if you don't believe what you mean, then I don't know
                 what I'm talking about, but I'd say I know what I'm talking about. Thus if you're a genius then you can't eat food like me. 
                 I am a genius. But you couldn't say that I am insane.
@@ -358,5 +440,4 @@
         </ScrollViewer>
 
     </Grid>
-    </ScrollViewer>
 </Page>

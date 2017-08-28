@@ -153,6 +153,7 @@
     <Compile Include="Utility\IncrementalLoadingTagList.cs" />
     <Compile Include="Utility\IncrementalLoadingUserList.cs" />
     <Compile Include="Utility\IncrementalLoadingVideoList.cs" />
+    <Compile Include="Utility\RefreshableFrameInterface.cs" />
     <Compile Include="Utility\StringAppenderConverter.cs" />
     <Compile Include="Utility\UrlToImageSourceConverter.cs" />
   </ItemGroup>

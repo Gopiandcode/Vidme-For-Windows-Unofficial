@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace VidmeForWindows
@@ -63,7 +64,6 @@ namespace VidmeForWindows
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-
             if (e.PrelaunchActivated == false)
             {
                 if (rootFrame.Content == null)

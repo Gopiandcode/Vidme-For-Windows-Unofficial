@@ -41,6 +41,7 @@ namespace VidmeForWindows
     {
         HOME,
         DOWNLOADS,
+        VIDEOS,
         FEEDS,
         WATCHLATER,
         TAGS,
@@ -358,11 +359,13 @@ namespace VidmeForWindows
             loggedIn = false;
 
             tryLogin();
-
-
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
             this.InitializeComponent();
+
+            if (MainFrame.ContentTransitions == null) MainFrame.ContentTransitions = new TransitionCollection();
+            MainFrame.ContentTransitions.Clear();
+            MainFrame.ContentTransitions.Add(new EntranceThemeTransition() {IsStaggeringEnabled=true });
 
 
             this.setState(CurrentPageState.HOME, true);
@@ -586,6 +589,10 @@ namespace VidmeForWindows
                     break;
                 case CurrentPageState.TAGSVIDEOS:
                     SelectMultipleButton.Visibility = Visibility.Visible;
+                    RefreshButton.Visibility = Visibility.Collapsed;
+                    break;
+                case CurrentPageState.VIDEOS:
+                    SelectMultipleButton.Visibility = Visibility.Collapsed;
                     RefreshButton.Visibility = Visibility.Collapsed;
                     break;
                 case CurrentPageState.CHANNELS:
