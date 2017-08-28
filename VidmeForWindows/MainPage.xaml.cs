@@ -37,28 +37,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace VidmeForWindows
 {
-    public enum CurrentPageState
-    {
-        HOME,
-        DOWNLOADS,
-        VIDEOS,
-        FEEDS,
-        WATCHLATER,
-        TAGS,
-        TAGSVIDEOS,
-        HOTTODAY,
-        FRESHUPLOADS,
-        CREATOR,
-        CREATORPAGE,
-        CHANNELS,
-        CHANNELVIDEOS,
-        CHANNELALBUMVIDEOS,
-        FOLLOWING,
-        FEATURED,
-        SETTINGS,
-        SEARCH,
-        SEARCHRESULTS
-    };
+
+
 
 
     public sealed partial class MainPage : Page
@@ -71,9 +51,7 @@ namespace VidmeForWindows
         ContentDialog dialog;
         string id;
         public SemaphoreSlim http_client_semaphore = new SemaphoreSlim(1, 1);
-        CurrentPageState current_state = CurrentPageState.HOME;
-        CurrentPageState last_state;
-        Models.User.User current_user;
+
 
         public ProgressBar contentLoadingRing
         {
@@ -117,25 +95,12 @@ namespace VidmeForWindows
             // store the last state, set state to creator.
 
             MainFrame.Navigate(type, o);
-            current_user = o.user;
 
             MainPageTitle.Text = o.user.displayname == null ? "" : o.user.displayname;
 
             while (MainFrame.BackStackDepth > 1)
                 MainFrame.BackStack.Remove(MainFrame.BackStack.Last());
-            if (MainFrame.BackStackDepth > 0)
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                if (current_state != CurrentPageState.CREATORPAGE)
-                {
-                    last_state = current_state;
-                    current_state = CurrentPageState.CREATORPAGE;
-                }
-            }
-            else
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
+
 
         }
 
@@ -202,8 +167,8 @@ namespace VidmeForWindows
                         SignInIconIcon.Visibility = Visibility.Collapsed;
 
                         SignInText.Text = response_data.user.displayname;
-
-                        setState(current_state, true);
+                        
+                        generateVideoFrame(VidmeUrlClass.FeedVideoURL, "Home", clearStack);
                     });
 
                 } else
@@ -249,7 +214,8 @@ namespace VidmeForWindows
 
                         id = null;
 
-                        setState(current_state, true);
+                        generateVideoFrame(VidmeUrlClass.FeaturedVideoURL, "Home", clearStack);
+
                     });
 
                     var credentials = getCredentialsFromLocker();
@@ -274,7 +240,7 @@ namespace VidmeForWindows
             }
         }
 
-        async Task generateVideoFrameAsync(string url) {
+        async Task generateVideoFrameAsync(string url, string title, Action onNavigated) {
 
             /*HttpRequestMessage request = new HttpRequestMessage()
             {
@@ -292,29 +258,21 @@ namespace VidmeForWindows
             List<Models.Videos.Video> videos = response_data.videos.ToList();*/
 
             IncrementalLoadingVideoList videos = new IncrementalLoadingVideoList(url, http_client_semaphore, httpclient);
+            
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                MainFrame.Navigate(typeof(HomeFrame), videos);
-
-                if (MainFrame.BackStackDepth > 0 && current_state != CurrentPageState.HOTTODAY && current_state != CurrentPageState.FRESHUPLOADS && current_state != CurrentPageState.FEATURED && current_state != CurrentPageState.HOME && current_state != CurrentPageState.FEEDS)
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                }
-                else
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                }
-
+                MainFrame.Navigate(typeof(HomeFrame), new HomeFrameParams() { videos = videos, title = title });
+                onNavigated();
             });
         }
 
-        void generateVideoFrame(string url)
+        void generateVideoFrame(string url, string title, Action onNavigated)
         {
             if (http_client_task != null)
-                http_client_task = http_client_task.ContinueWith((task) => generateVideoFrameAsync(url));
+                http_client_task = http_client_task.ContinueWith((task) => generateVideoFrameAsync(url, title, onNavigated));
             else
-                http_client_task = generateVideoFrameAsync(url);
+                http_client_task = generateVideoFrameAsync(url, title, onNavigated);
         }
 
         async Task generateChannelFrameAsync()
@@ -367,8 +325,40 @@ namespace VidmeForWindows
             MainFrame.ContentTransitions.Clear();
             MainFrame.ContentTransitions.Add(new EntranceThemeTransition() {IsStaggeringEnabled=true });
 
+            MainFrame.Navigated += (e,  f) =>
+            {
+                RefreshableFrameInterface currentpane = MainFrame.Content as RefreshableFrameInterface;
+                if (currentpane != null)
+                {
+                    currentpane.loadedAction(() => {
+                        if (currentpane.multipleSupported()) { SelectMultipleButton.Visibility = Visibility.Visible; }
+                        else { SelectMultipleButton.Visibility = Visibility.Collapsed; }
 
-            this.setState(CurrentPageState.HOME, true);
+                        if (currentpane.isRefreshable()) { RefreshButton.Visibility = Visibility.Visible; }
+                        else { RefreshButton.Visibility = Visibility.Collapsed; }
+
+                        MainPageTitle.Text = currentpane.getTitleText();
+
+                        if (MainFrame.BackStackDepth > 0)
+                        {
+                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                        }
+                        else
+                        {
+                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                        }
+
+
+                    });
+
+                }
+            };
+
+
+            if (loggedIn)
+                generateVideoFrame(VidmeUrlClass.FeedVideoURL, "Home", clearStack);
+            else
+                generateVideoFrame(VidmeUrlClass.FeaturedVideoURL, "Home", clearStack);
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
@@ -507,14 +497,19 @@ namespace VidmeForWindows
         private void clearStack()
         {
             // pop all the previous items
+            resetSelectMultipleButton();
             foreach (var item in MainFrame.BackStack.ToList())
                 MainFrame.BackStack.Remove(item);
-        }
 
+            if (MainFrame.BackStackDepth > 0)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
 
-        public void setState(CurrentPageState state)
-        {
-            setState(state, false);
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e)
@@ -524,114 +519,23 @@ namespace VidmeForWindows
             if (MainFrame.CanGoBack)
             {
                 e.Handled = true;
-
-
-
-                switch (current_state) {
-                    case CurrentPageState.CHANNELVIDEOS:
-                        setState(CurrentPageState.CHANNELS);
-                        break;
-                    case CurrentPageState.TAGSVIDEOS:
-                        setState(CurrentPageState.TAGS);
-                        break;
-                    case CurrentPageState.CREATORPAGE:
-                        setState(last_state);
                         if (MainFrame.BackStackDepth > 0)
                         {
                             MainFrame.GoBack();
                         }
-                        break;
-                    case CurrentPageState.CHANNELALBUMVIDEOS:
-                        SelectMultipleButton.Visibility = Visibility.Visible;
-                        RefreshButton.Visibility = Visibility.Visible;
-                        if (MainFrame.BackStackDepth > 0)
-                        {
-                            MainFrame.GoBack();
-                        }
-                        current_state = CurrentPageState.CREATORPAGE;
-                        break;
-
-                    default:
-                        if (MainFrame.BackStackDepth > 0)
-                        {
-                            MainFrame.GoBack();
-                        }
-                        break;
-                }
-
-                
-
-                if (MainFrame.BackStackDepth > 0 && current_state != CurrentPageState.HOTTODAY && current_state!= CurrentPageState.FRESHUPLOADS && current_state != CurrentPageState.FEATURED && current_state != CurrentPageState.HOME && current_state != CurrentPageState.FEEDS)
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                }
-                else
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                }
             }
         }
 
-    public void setState(CurrentPageState state, Boolean ignore_state)
+        public void resetSelectMultipleButton()
         {
-            MainSplitView.IsPaneOpen = false;
-            if (current_state == state && !ignore_state) return;
             SelectMultipleButton.Background = new SolidColorBrush((Application.Current.Resources["ApplicationTheme_DarkMidground"] as SolidColorBrush).Color);
             SelectMultipleButton.Content = '\uE133';
-            
-                RefreshButton.Visibility = Visibility.Visible;
+        }
 
-            switch (state)
-            {
-                case CurrentPageState.CHANNELVIDEOS:
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    RefreshButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.TAGSVIDEOS:
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    RefreshButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.VIDEOS:
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    RefreshButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.CHANNELS:
-                    MainPageTitle.Text = "Channels";
-                    clearStack();
-                    generateChannelFrame();
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.DOWNLOADS:
-                    MainPageTitle.Text = "Downloads";
-                    clearStack();
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.FEATURED:
-                    MainPageTitle.Text = "Featured";
-                    clearStack();
-                    generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    break;
-                case CurrentPageState.FEEDS:
-                    MainPageTitle.Text = "Feed";
-                    clearStack();
-                    if (loggedIn)
-                        generateVideoFrame(VidmeUrlClass.FeedVideoURL);
-                    else
-                        generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    break;
-                case CurrentPageState.CREATOR:
-                    MainPageTitle.Text = "Creators";
-                    MainFrame.Navigate(typeof(UsersFrame), new UserFrameParams() {
-                        id = id,
-                        httpClient = httpclient,
-                        http_client_semaphore = http_client_semaphore
-                    });
-                    clearStack();
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    break;
+    /*public void setState(Boolean ignore_state)
+        {
+
+            
                 case CurrentPageState.CREATORPAGE:
                     MainPageTitle.Text = current_user.displayname;
                     MainFrame.Navigate(typeof(CreatorFrame), new CreatorFrameParams()
@@ -643,133 +547,105 @@ namespace VidmeForWindows
                     });
                     MainFrame.BackStack.Remove(MainFrame.BackStack.Last());
                     break;
-                case CurrentPageState.CHANNELALBUMVIDEOS:
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    RefreshButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.FRESHUPLOADS:
-                    MainPageTitle.Text = "Fresh Uploads";
-                    clearStack();
-                    generateVideoFrame(VidmeUrlClass.FreshVideoURL);
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    break;
-                case CurrentPageState.HOME:
-                    MainPageTitle.Text = "Home";
                     
-                    if (loggedIn)
-                        generateVideoFrame(VidmeUrlClass.FeedVideoURL);
-                    else
-                        generateVideoFrame(VidmeUrlClass.FeaturedVideoURL);
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    clearStack();
-                    break;
-                case CurrentPageState.HOTTODAY:
-                    MainPageTitle.Text = "Hot Today";
-                    clearStack();
-                    generateVideoFrame(VidmeUrlClass.HotVideoURL);
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    break;
-                case CurrentPageState.SEARCH:
-                    MainPageTitle.Text = "Search";
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.SETTINGS:
-                    MainPageTitle.Text = "Settings";
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.SEARCHRESULTS:
-                    MainPageTitle.Text = "Search Results";
-                    clearStack();
-                    SelectMultipleButton.Visibility = Visibility.Visible;
-                    break;
-                case CurrentPageState.TAGS:
-                    MainPageTitle.Text = "Tags";
-                    clearStack();
-                    MainFrame.Navigate(typeof(TagFrame), new TagFrameParams() {
-                        httpClient = httpclient,
-                        http_client_semaphore = http_client_semaphore
-                    });
-                    clearStack();
-                    SelectMultipleButton.Visibility = Visibility.Collapsed;
-                    break;
-                case CurrentPageState.WATCHLATER:
-                    MainPageTitle.Text = "Watch Later";
-                    clearStack();
-                    SelectMultipleButton.Visibility = Visibility.Visible;
 
-                    break;
-            }
-            
-            current_state = state;
-
-            foreach (PageStackEntry p in MainFrame.ForwardStack)
-            {
-                MainFrame.ForwardStack.Remove(p);
-            }
-            if (MainFrame.BackStackDepth > 0)
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            } else
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
-
-        }
+        } */
 
 
         public void displayChannelVideos(string channel_url, string title)
         {
-            setState(CurrentPageState.CHANNELVIDEOS);
-            MainPageTitle.Text = title;
-            generateVideoFrame(channel_url);
+            generateVideoFrame(channel_url, title, () => { });
 
         }
 
         public void displayTagVideos(string url, string title)
         {
-            setState(CurrentPageState.TAGSVIDEOS);
-            MainPageTitle.Text = title;
-            generateVideoFrame(url);
+            generateVideoFrame(url, title, () => { });
         }
         
         private void HomeButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.HOME);
+            MainSplitView.IsPaneOpen = false;
+
+            if (loggedIn)
+                generateVideoFrame(VidmeUrlClass.FeedVideoURL, "Home", clearStack);
+            else
+                generateVideoFrame(VidmeUrlClass.FeaturedVideoURL, "Home", clearStack);
+            
         }
         private void DownloadButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.DOWNLOADS);
+            MainSplitView.IsPaneOpen = false;
         }
-        private void FeedButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.FEEDS);
+        private void FeedButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainSplitView.IsPaneOpen = false;
+            if (loggedIn)
+                generateVideoFrame(VidmeUrlClass.FeedVideoURL, "Feed", clearStack);
+            else
+                generateVideoFrame(VidmeUrlClass.FeaturedVideoURL, "Feed", clearStack);
         }
         private void WatchLaterButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.WATCHLATER);
+            MainSplitView.IsPaneOpen = false;
         }
-        private void TagsButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.TAGS);
+        private void TagsButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainSplitView.IsPaneOpen = false;
+            MainFrame.Navigate(typeof(TagFrame), new TagFrameParams(){httpClient = httpclient,http_client_semaphore = http_client_semaphore});
+            clearStack();
         }
         private void HotTodayButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.HOTTODAY);
+            MainSplitView.IsPaneOpen = false;
+            generateVideoFrame(VidmeUrlClass.HotVideoURL, "Hot Today", clearStack);
         }
         private void FreshUploadsButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.FRESHUPLOADS);
+            MainSplitView.IsPaneOpen = false;
+            generateVideoFrame(VidmeUrlClass.FreshVideoURL, "Fresh Videos", clearStack);
         }
         private void ChannelsButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.CHANNELS);
+            MainSplitView.IsPaneOpen = false;
+            generateChannelFrame();
         }
         private void CreatorButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.CREATOR);
+            MainSplitView.IsPaneOpen = false;
+            MainFrame.Navigate(typeof(UsersFrame), new UserFrameParams() {id = id,httpClient = httpclient,http_client_semaphore = http_client_semaphore});
+            clearStack();
         }
         private void FeaturedButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.FEATURED);
+            MainSplitView.IsPaneOpen = false;
+            generateVideoFrame(VidmeUrlClass.FeaturedVideoURL, "Featured Videos", clearStack);
         }
         private void SettingsButton_Click(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.SETTINGS);
+            MainSplitView.IsPaneOpen = false;
         }
-        private void SearchButtonClick(object sender, RoutedEventArgs e) {
-            setState(CurrentPageState.SEARCH);
+        private void SearchButtonClick(object sender, RoutedEventArgs e)
+        {
+            MainSplitView.IsPaneOpen = false;
         }
+
+        public void RefreshFrame()
+        {
+            RefreshableFrameInterface currentpane = MainFrame.Content as RefreshableFrameInterface;
+            if (currentpane != null)
+            {
+                var page_param = currentpane.getPageParameter();
+
+                MainFrame.Navigate(MainFrame.CurrentSourcePageType, currentpane.getPageParameter());
+                
+                MainFrame.BackStack.Remove(MainFrame.BackStack.Last());
+
+                if (MainFrame.BackStackDepth > 0)
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                }
+                else
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                }
+
+            }
+        }
+
         private void RefreshButton_Click(object sender, RoutedEventArgs e) {
-            setState(current_state, true);
+            RefreshFrame();
         }
 
     }

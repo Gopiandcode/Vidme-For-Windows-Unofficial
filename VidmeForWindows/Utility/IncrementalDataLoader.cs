@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Data;
 
 namespace VidmeForWindows.Utility
 {
-    abstract class IncrementalLoadingList<T,P> : ObservableCollection<T>, ISupportIncrementalLoading
+    public abstract class IncrementalLoadingList<T,P> : ObservableCollection<T>, ISupportIncrementalLoading
     {
         private int offset = 0;
         private int limit = 10;

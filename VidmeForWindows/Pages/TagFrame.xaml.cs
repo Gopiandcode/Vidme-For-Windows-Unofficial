@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using VidmeForWindows.Utility;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -34,8 +35,9 @@ namespace VidmeForWindows.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class TagFrame : Page
+    public sealed partial class TagFrame : Page, RefreshableFrameInterface
     {
+        event Action onLoaded;
         State current_state;
         HttpClient client;
         SemaphoreSlim http_client_semaphore;
@@ -55,6 +57,8 @@ namespace VidmeForWindows.Pages
             // initialize list
 
             base.OnNavigatedTo(e);
+            if (onLoaded != null)
+                onLoaded();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -120,6 +124,35 @@ namespace VidmeForWindows.Pages
             Models.Label.Tag tag = e.ClickedItem as Models.Label.Tag;
             
             ((Window.Current.Content as Frame).Content as MainPage).displayTagVideos(Config.VidmeUrlClass.TagVideoURL(tag.tag_id), tag.label + " Tags");
+        }
+
+        public object getPageParameter()
+        {
+            return new TagFrameParams()
+            {
+                httpClient = client,
+                http_client_semaphore = http_client_semaphore
+            };
+        }
+
+        public bool multipleSupported()
+        {
+            return false;
+        }
+
+        public bool isRefreshable()
+        {
+            return true;
+        }
+
+        public string getTitleText()
+        {
+            return "Tags";
+        }
+
+        public void loadedAction(Action loaded)
+        {
+            onLoaded += loaded;
         }
     }
 }

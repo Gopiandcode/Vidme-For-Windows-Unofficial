@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using VidmeForWindows.Utility;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -21,8 +22,10 @@ namespace VidmeForWindows.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ChannelFrame : Page
+    public sealed partial class ChannelFrame : Page, RefreshableFrameInterface
     {
+        List<Models.Channels.Channel> channels;
+        event Action onLoaded;
         public ChannelFrame()
         {
             this.InitializeComponent();
@@ -31,7 +34,7 @@ namespace VidmeForWindows.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            List<Models.Channels.Channel> channels = e.Parameter as List<Models.Channels.Channel>;
+            channels = e.Parameter as List<Models.Channels.Channel>;
             MainView.ItemsSource = channels;
             base.OnNavigatedTo(e);
         }
@@ -40,6 +43,8 @@ namespace VidmeForWindows.Pages
         {
             MainView.ItemsSource = null;
             base.OnNavigatedFrom(e);
+            if (onLoaded != null)
+                onLoaded();
         }
 
         private void OnGridViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -89,6 +94,31 @@ namespace VidmeForWindows.Pages
             ((Window.Current.Content as Frame).Content as MainPage).displayChannelVideos(channel_video_URL, channel.title);
 
 
+        }
+
+        public object getPageParameter()
+        {
+            return channels;
+        }
+
+        public bool multipleSupported()
+        {
+            return false;
+        }
+
+        public bool isRefreshable()
+        {
+            return false;
+        }
+
+        public string getTitleText()
+        {
+            return "Channels";
+        }
+
+        public void loadedAction(Action loaded)
+        {
+            onLoaded += loaded;
         }
     }
 

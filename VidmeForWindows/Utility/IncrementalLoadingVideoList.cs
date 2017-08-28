@@ -115,7 +115,7 @@ namespace VidmeForWindows.Utility
         
     }*/
 
-    class IncrementalLoadingVideoList : IncrementalLoadingList<VidmeForWindows.Models.Videos.Video, VidmeForWindows.Models.Videos.Rootobject>
+    public class IncrementalLoadingVideoList : IncrementalLoadingList<VidmeForWindows.Models.Videos.Video, VidmeForWindows.Models.Videos.Rootobject>
     {
 
         public delegate HttpRequestMessage retrieve_request_message(string url);

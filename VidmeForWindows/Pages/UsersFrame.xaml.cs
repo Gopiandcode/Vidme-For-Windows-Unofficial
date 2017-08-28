@@ -39,11 +39,12 @@ namespace VidmeForWindows.Pages
         public SemaphoreSlim http_client_semaphore;
     }
 
-    public sealed partial class UsersFrame : Page
+    public sealed partial class UsersFrame : Page, RefreshableFrameInterface
     {
         private string id;
         private HttpClient httpClient;
         private SemaphoreSlim http_client_semaphore;
+        event Action onLoaded;
 
         UsersState user_state;
         UsersState last_state;
@@ -77,6 +78,8 @@ namespace VidmeForWindows.Pages
             }
 
             base.OnNavigatedTo(e);
+            if (onLoaded != null)
+                onLoaded();
         }
 
         private void OnGridViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -213,6 +216,36 @@ namespace VidmeForWindows.Pages
         {
             SearchTextBox.Text = "";
             updateSearch();
+        }
+
+        public object getPageParameter()
+        {
+            return new UserFrameParams()
+            {
+                httpClient = httpClient,
+                http_client_semaphore = http_client_semaphore,
+                id = id
+            };
+        }
+
+        public bool multipleSupported()
+        {
+            return false;
+        }
+
+        public bool isRefreshable()
+        {
+            return true;
+        }
+
+        public string getTitleText()
+        {
+            return "Users";
+        }
+
+        public void loadedAction(Action loaded)
+        {
+          onLoaded += loaded;
         }
     }
 }

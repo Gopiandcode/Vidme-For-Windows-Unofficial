@@ -36,7 +36,7 @@ namespace VidmeForWindows.Pages
         public string id;
     }
 
-    public sealed partial class CreatorFrame : Page
+    public sealed partial class CreatorFrame : Page, RefreshableFrameInterface
     {
         private Models.User.User user;
         private HttpClient httpClient;
@@ -44,6 +44,7 @@ namespace VidmeForWindows.Pages
         Button SelectMultipleButton;
         string id;
         Boolean isfollowing;
+        public event Action onLoaded;
 
         public CreatorFrame()
         {
@@ -89,16 +90,12 @@ namespace VidmeForWindows.Pages
                     break;
                 case "Albums":
                     return;
-                    break;
                 case "Following":
                     return;
-                    break;
                 case "Comments":
                     return;
-                    break;
                 case "Followers":
                     return;
-                    break;
             }
 
             if (MainView.SelectionMode == ListViewSelectionMode.Single)
@@ -166,6 +163,9 @@ namespace VidmeForWindows.Pages
             CommentsView.ItemsSource = new IncrementalLoadingCommentList(Config.VidmeUrlClass.UserCommentsURL(user.user_id), http_client_semaphore, httpClient);
 
             base.OnNavigatedTo(e);
+
+            if (onLoaded != null)
+                onLoaded();
         }
 
         private void OnUserGridViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -324,19 +324,26 @@ namespace VidmeForWindows.Pages
         {
 
             Models.Album.Album alb = e.ClickedItem as Models.Album.Album;
-            ((Window.Current.Content as Frame).Content as MainPage).setState(CurrentPageState.CHANNELALBUMVIDEOS);
-            ((Window.Current.Content as Frame).Content as MainPage).PublicMainFrame.Navigate(typeof(HomeFrame), 
-                
-                new IncrementalLoadingVideoList(
+            ((Window.Current.Content as Frame).Content as MainPage).PublicMainFrame.Navigate(typeof(HomeFrame),
+
+                new HomeFrameParams() {
+
+                    videos = new IncrementalLoadingVideoList(
                 Config.VidmeUrlClass.AlbumVideosURL(alb.album_id),
-                http_client_semaphore, 
+                http_client_semaphore,
                 httpClient,
                 new IncrementalLoadingVideoList.retrieve_request_message( (string url) => {
                     return new HttpRequestMessage()
                     {
                         RequestUri = new Uri(url),
                         Method = HttpMethod.Get
-                    }; ; })));
+                    }; ; })),
+                    title = alb.title
+
+
+                }
+                    );
+        
         }
 
 
@@ -560,6 +567,39 @@ namespace VidmeForWindows.Pages
                     followbuttontask = FollowChange();
 
             }
+        }
+
+        public object getPageParameter()
+        {
+            return new CreatorFrameParams()
+            {
+                httpClient = httpClient,
+                http_client_semaphore = http_client_semaphore,
+                id = id,
+                user = user
+            };
+        }
+
+        public bool multipleSupported()
+        {
+            return true;
+        }
+
+        public bool isRefreshable()
+        {
+            return true;
+        }
+
+        public string getTitleText()
+        {
+            if (user.displayname != null)
+                return user.displayname;
+            else return "";
+        }
+
+        public void loadedAction(Action loaded)
+        {
+            onLoaded += loaded;
         }
     }
 }

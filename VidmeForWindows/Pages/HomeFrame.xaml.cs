@@ -20,13 +20,22 @@ using Windows.UI.Xaml.Navigation;
 
 namespace VidmeForWindows.Pages
 {
+
+    public class HomeFrameParams
+    {
+        public string title;
+        public IncrementalLoadingVideoList videos;
+    }
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HomeFrame : Page
+    public sealed partial class HomeFrame : Page, RefreshableFrameInterface
     {
+        private event Action onLoaded;
         Button SelectMultipleButton;
-        public string video_url;
+        public string title;
+        public IncrementalLoadingVideoList videos;
 
         /*~HomeFrame()
         {
@@ -52,10 +61,16 @@ namespace VidmeForWindows.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            IncrementalLoadingVideoList videos = e.Parameter as IncrementalLoadingVideoList;
-            video_url = videos.url;
+            var input_params = e.Parameter as HomeFrameParams;
+
+            videos = input_params.videos;
+            title = input_params.title;
+
             MainView.ItemsSource = videos;
             base.OnNavigatedTo(e);
+
+            if (onLoaded != null)
+                onLoaded();
         }
 
         private void OnGridViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -142,7 +157,37 @@ namespace VidmeForWindows.Pages
                 http_client_semaphore = page.http_client_semaphore,
                 videos = new List<Models.Videos.Video>() { e.ClickedItem as Models.Videos.Video }
             });
-            page.setState(CurrentPageState.VIDEOS);
+        }
+        public object getPageParameter()
+        {
+            return new HomeFrameParams()
+            {
+                videos = videos,
+                title = title
+            };
+        }
+
+    public bool multipleSupported()
+    {
+            return true;
+    }
+
+    public bool isRefreshable()
+    {
+            return true;
+    }
+
+    public string getTitleText()
+    {
+            if (title == null)
+                return "";
+            else
+                return title;
+    }
+
+        public void loadedAction(Action loaded)
+        {
+            onLoaded += loaded;
         }
     }
 }
