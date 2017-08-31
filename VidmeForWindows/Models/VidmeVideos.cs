@@ -36,27 +36,7 @@ namespace VidmeForWindows.Models.Videos
         public bool isDefault { get; set; }
     }
 
-    public class Watching
-    {
-        public int _14307783 { get; set; }
-        public int _16107552 { get; set; }
-        public int _16833060 { get; set; }
-    }
 
-    public class Viewervotes
-    {
-        public _16737705 _16737705 { get; set; }
-    }
-
-    public class _16737705
-    {
-        public string vote_id { get; set; }
-        public string video_id { get; set; }
-        public string user_id { get; set; }
-        public int value { get; set; }
-        public string date_created { get; set; }
-        public string date_modified { get; set; }
-    }
 
     public class Video
     {

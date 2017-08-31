@@ -36,13 +36,13 @@ namespace VidmeForWindows.Models.Comment
         public float? made_at_time { get; set; }
         public int score { get; set; }
         public int comment_count { get; set; }
-        public User user { get; set; }
+        public Models.User.User user { get; set; }
         public Viewervote viewerVote { get; set; }
-        public Video video { get; set; }
+        public Models.Videos.Video video { get; set; }
         public Comment[] comments { get; set; }
     }
 
-    public class User
+    /*public class User
     {
         public string user_id { get; set; }
         public string username { get; set; }
@@ -63,7 +63,7 @@ namespace VidmeForWindows.Models.Comment
         public string bio { get; set; }
         public object ga_id { get; set; }
         public bool vip { get; set; }
-    }
+    }*/
 
     public class Viewervote
     {
@@ -77,7 +77,7 @@ namespace VidmeForWindows.Models.Comment
         public string date_modified { get; set; }
     }
 
-    public class Video
+    /*public class Video
     {
         public string video_id { get; set; }
         public string url { get; set; }
@@ -129,10 +129,10 @@ namespace VidmeForWindows.Models.Comment
         public bool is_featured { get; set; }
         public string date_featured { get; set; }
         public Creator creator { get; set; }
-    }
+    }*/
 
 
-    public class Channel
+    /*public class Channel
     {
         public string channel_id { get; set; }
         public string url { get; set; }
@@ -150,7 +150,7 @@ namespace VidmeForWindows.Models.Comment
         public string avatar_ai { get; set; }
         public string cover_url { get; set; }
         public string cover_ai { get; set; }
-    }
+    }*/
 
     public class Creator
     {

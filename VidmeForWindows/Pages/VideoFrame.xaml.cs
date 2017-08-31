@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using VidmeForWindows.Utility;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Core;
+using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -38,11 +40,17 @@ namespace VidmeForWindows.Pages
     {
         public HttpClient httpclient;
         public SemaphoreSlim http_client_semaphore;
-        public List<Models.Videos.Video> videos;
+        public List<Models.Videos.Video> videos = new List<Models.Videos.Video>();
+        Task current_video_task;
         Models.Videos.Video current {
             get
             {
-                return videos.ElementAt(position);
+                if (videos.Count != 0)
+                    return videos.ElementAt(position);
+                else
+                    return new Models.Videos.Video()
+                    {
+                    };
             }
         }
         event Action onLoaded;
@@ -91,9 +99,7 @@ namespace VidmeForWindows.Pages
             httpclient = param.httpclient;
             http_client_semaphore = param.http_client_semaphore;
             videos = param.videos;
-
-            MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(current.complete_url));
-            
+            setVideo(current);
 
 
             base.OnNavigatedTo(e);
@@ -101,8 +107,51 @@ namespace VidmeForWindows.Pages
                 onLoaded();
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            if(MediaPlayer.MediaPlayer != null)
+            MediaPlayer.MediaPlayer.Pause();
+            base.OnNavigatedFrom(e);
+        }
 
         private void setVideo(Models.Videos.Video video)
+        {
+            if (current_video_task != null)
+            {
+                current_video_task.ContinueWith((Task t) =>
+                {
+                    t.Wait();
+                    return setVideoAsync(video);
+                });
+            }
+            else
+                current_video_task = setVideoAsync(video);
+                 }
+
+        private async Task setVideoAsync(Models.Videos.Video video)
+        {
+            AdaptiveMediaSourceCreationResult src = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(video.complete_url));
+            await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal ,() => {
+
+                MoreFromListView.ItemsSource = new IncrementalLoadingVideoList(Config.VidmeUrlClass.UserVideoURL(video.user_id), http_client_semaphore, httpclient);
+
+                if (src.Status == AdaptiveMediaSourceCreationStatus.Success) {
+                    MediaPlayer.SetMediaPlayer(new Windows.Media.Playback.MediaPlayer());
+
+                    MediaPlayer.MediaPlayer.Source = MediaSource.CreateFromAdaptiveMediaSource(src.MediaSource);
+
+                } else
+                {
+                    MediaPlayer.SetMediaPlayer(new Windows.Media.Playback.MediaPlayer());
+                    MediaPlayer.MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(video.complete_url));
+                }
+
+            });
+            
+
+        }
+
+        private void PlaylistListView_ItemClick(object sender, ItemClickEventArgs e)
         {
 
         }
