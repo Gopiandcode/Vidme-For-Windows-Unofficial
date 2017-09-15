@@ -90,7 +90,6 @@
             RelativePanel.AlignLeftWithPanel="True"
             Height="150"
             Margin="10,10,10,10"
-            HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
 
             BorderBrush="{StaticResource ApplicationTheme_RedHighlights}"

@@ -109,8 +109,8 @@ namespace VidmeForWindows.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            if(MediaPlayer.MediaPlayer != null)
-            MediaPlayer.MediaPlayer.Pause();
+            //if(MediaPlayer.MediaPlayer != null)
+            //MediaPlayer.MediaPlayer.Pause();
             base.OnNavigatedFrom(e);
         }
 
@@ -130,7 +130,10 @@ namespace VidmeForWindows.Pages
 
         private async Task setVideoAsync(Models.Videos.Video video)
         {
-            AdaptiveMediaSourceCreationResult src = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(video.complete_url));
+            foreach (var val in video.formats)
+                Debug.WriteLine(val.type);
+            MediaPlayer.Navigate(new Uri(video.embed_url));
+            /*AdaptiveMediaSourceCreationResult src = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(video.complete_url));
             await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal ,() => {
 
                 MoreFromListView.ItemsSource = new IncrementalLoadingVideoList(Config.VidmeUrlClass.UserVideoURL(video.user_id), http_client_semaphore, httpclient);
@@ -142,11 +145,19 @@ namespace VidmeForWindows.Pages
 
                 } else
                 {
+                    
                     MediaPlayer.SetMediaPlayer(new Windows.Media.Playback.MediaPlayer());
-                    MediaPlayer.MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(video.complete_url));
+                    MediaPlayer.MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(video.complete_url.LastIndexOf('?') == -1 ?
+                        video.complete_url :
+                        video.complete_url.Substring(0, video.complete_url.LastIndexOf('?'))
+                        ));
+            MediaPlayer.MediaPlayer.Play();
+                  
+                    //MediaPlayer.MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(video.complete_url));
+                    //MediaPlayer.MediaPlayer.SetUriSource(new Uri(video.complete_url));
                 }
 
-            });
+            });*/
             
 
         }
